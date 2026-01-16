@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth.middleware");
-const { getMyProfile, updateMyProfile, updateMyMeetings } = require("../controllers/user.controller");
+const upload = require("../middleware/updateProfile");
+const { getMyProfile, updateProfile, updateMyMeetings } = require("../controllers/user.controller");
 
 router.get("/profile", auth, getMyProfile);
-router.put("/profile/update", auth, updateMyProfile);
+router.put("/profile/update", auth, upload.single("profileImg"), updateProfile);
 router.patch("/meeting/update/", updateMyMeetings)
 
 module.exports = router;

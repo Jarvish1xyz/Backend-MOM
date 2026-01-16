@@ -12,22 +12,39 @@ exports.getMyProfile = async (req, res) => {
 };
 
 // 🔹 UPDATE MY PROFILE
-exports.updateMyProfile = async (req, res) => {
+exports.updateProfile = async (req, res) => {
   try {
-    const { phone, profileImg, role } = req.body;
+    const { phone, role } = req.body;
+    console.log(req.body);
+    console.log(req.file);
+    
 
-    const updatedUser = await User.findByIdAndUpdate(
+    const updateData = {
+      phone,
+      role
+    };
+
+    // 🔹 If profile image uploaded
+    if (req.file) {
+      updateData.profileImg = `/uploads/profile/${req.file.filename}`;
+    }
+
+    const user = await User.findByIdAndUpdate(
       req.user.id,
-      { phone, profileImg, role },
+      updateData,
       { new: true }
     ).select("-password");
 
-    res.json({
-      msg: "Profile updated successfully",
-      user: updatedUser
+    res.status(200).json({
+      success: true,
+      user
     });
-  } catch (err) {
-    res.status(500).json({ err: err.message });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
@@ -35,7 +52,7 @@ exports.updateMyMeetings = async (req, res) => {
   try {
     const { email, meetingid } = req.body;
     console.log(req.body);
-    
+
     const meeting = await Meeting.findOne({ meetingid: meetingid });
     console.log(meeting);
 

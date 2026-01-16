@@ -3,11 +3,14 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require('mongoose');
 const auth = require("./routes/auth.route")
-const profile = require('./routes/user.route')
+const user = require('./routes/user.route')
 const Meeting = require('./routes/meeting.route')
 const app = express();
 const port = process.env.PORT;
 const url = process.env.MONGOURL;
+const path = require('path');
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(express.json());
 app.use(cors());
@@ -20,7 +23,7 @@ mongoose.connect(url).then(()=> {
 })
 
 app.use("/auth", auth);
-app.use('/user', profile);
+app.use('/user', user);
 app.use('/meeting', Meeting);
 
 app.listen(port, () => {
