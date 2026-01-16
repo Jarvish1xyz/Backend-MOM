@@ -1,0 +1,124 @@
+/* ---------- Glass Cards ---------- */
+
+.glass-form {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(14px);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 15px 55px rgba(0, 0, 0, 0.32);
+    animation: floatGlass 6s ease-in-out infinite;
+}
+
+/* ---------- Inputs ---------- */
+
+.input-glass {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.85);
+    outline: none;
+    border: none;
+}
+
+/* ---------- Button ---------- */
+
+.btn-primary {
+    background: linear-gradient(to right, #2563eb, #1d4ed8);
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.5);
+}
+
+/* ---------- Sliding Welcome Panel ---------- */
+
+.glass-slider {
+    background: linear-gradient(135deg,
+            rgba(14, 165, 233, 0.85),
+            rgba(56, 189, 248, 0.75));
+    backdrop-filter: blur(18px);
+    color: white;
+    padding: 50px;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- Slide Logic ---------- */
+
+.slide-right {
+    left: 50%;
+}
+
+.slide-left {
+    left: 0;
+}
+
+/* ---------- Floating Animation ---------- */
+
+@keyframes floatGlass {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes textIn {
+    0% {
+        opacity: 1;
+        transform: translateY(12px);
+    }
+
+    50% {
+        opacity: 0;
+        transform: translateY(0px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(12px);
+    }
+}
+
+.animate-textIn {
+    animation: textIn 0.5s ease forwards;
+}
+
+@keyframes textOut {
+    0% {
+        opacity: 1;
+        transform: translateY(12px);
+    }
+
+    50% {
+        opacity: 0;
+        transform: translateY(0px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(12px);
+    }
+}
+
+.animate-textOut {
+    animation: textOut 0.5s ease forwards;
+}

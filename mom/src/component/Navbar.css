@@ -1,0 +1,37 @@
+#side {
+    width: fit-content;
+}
+
+.navbar {
+    background-color: white;
+    height: fit-content;
+    position: fixed;
+    width: 100%;
+    /* border-width: 0 0 1px 0; */
+    /* border-color: gray; */
+    box-shadow: 0 10px 25px rgba(49, 59, 63, 0.15);
+}
+
+.line-1, .line-2, .line-3, .side {
+    transition: 0.3s ease-in-out;
+    transform-origin: left center;
+}
+
+.line-1c, .line-2c, .line-3c, .sidec {
+    transition: 0.3s ease-in-out;
+    transform-origin: left center;
+    /* transform: translateX(20vh); */
+}
+
+.line-2c {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.line-1c {
+    transform:rotate(35deg);
+}
+
+.line-3c {
+    transform: rotate(-35deg);
+}

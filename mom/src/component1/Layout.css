@@ -1,0 +1,11 @@
+.content {
+    transition: 0.3s ease-in-out;
+    transform-origin: right center;
+    width: 100%;
+}
+
+.contentFull {
+    transition: 0.3s ease-in-out;
+    transform-origin: right center;
+    width: calc(100% - 30vh);
+}

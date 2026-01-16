@@ -1,0 +1,44 @@
+.nolist {
+    transition: 0.3s ease-in-out;
+    transform-origin: right center;
+    width: 30vh;
+}
+
+.islist {
+    transition: 0.3s ease-in-out;
+    transform-origin: right center;
+    width: 0vh;
+    /* transform: translateX(-20vh); */
+}
+
+.navbar {
+    z-index: 500;
+    background-color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.line-1, .line-2, .line-3, .side {
+    transition: 0.3s ease-in-out;
+    transform-origin: left center;
+}
+
+.line-1c, .line-2c, .line-3c, .sidec {
+    transition: 0.3s ease-in-out;
+    transform-origin: left center;
+    /* transform: translateX(20vh); */
+}
+
+.line-2c {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.line-1c {
+    transform:rotate(35deg);
+}
+
+.line-3c {
+    transform: rotate(-35deg);
+}

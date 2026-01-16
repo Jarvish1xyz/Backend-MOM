@@ -1,0 +1,15 @@
+.glass-form {
+    background: rgba(149, 164, 214, 0.25);
+    backdrop-filter: blur(14px);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 15px 55px rgba(0, 0, 0, 0.32);
+}
+
+.btn-secondary {
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  background: rgba(14, 165, 233, 0.1);
+  color: rgb(14, 165, 233);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+}

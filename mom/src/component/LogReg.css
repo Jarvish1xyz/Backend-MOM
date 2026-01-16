@@ -1,0 +1,43 @@
+.log {
+  background: url('https://img-s-msn-com.akamaized.net/tenant/amp/entityid/BB1msG0V?w=0&h=0&q=60&m=6&f=jpg&u=t');
+  overflow-x: hidden;
+  height: 100vh;
+  font-family: cursive;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.card-change-n, .card-change-r {
+  margin: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+
+.card-change-n {
+  animation-name: card-change-n;
+  animation-timing-function: ease-in-out;
+  animation-duration: 1.0s;
+  animation-direction: normal;
+  animation-fill-mode:forwards;
+}
+
+@keyframes card-change-n {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(10vh); }
+  100% { transform: translateY(-120vh); }
+}
+
+.card-change-r {
+    animation-name: card-change-r;
+    animation-timing-function: ease-in-out;
+    animation-duration: 1.0s;
+    animation-direction: reverse;
+    animation-fill-mode:forwards;
+}
+
+@keyframes card-change-r {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(10vh); }
+  100% { transform: translateY(-120vh); }
+}
