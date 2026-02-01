@@ -8,6 +8,8 @@ const MeetingDetails = () => {
     const navigate = useNavigate();
     const [meeting, setMeeting] = useState(null);
     const [dateObj, setDateObj] = useState(null);
+    const [updating, setUpdating] = useState(false);
+    const [isStarred, setIsStarred] = useState(false); // Track star status locally
 
     useEffect(() => {
         axios.get(`/meeting/details/${id}`, {
@@ -16,10 +18,40 @@ const MeetingDetails = () => {
             .then(res => {
                 setMeeting(res.data);
                 setDateObj(new Date(res.data.Date));
-                console.log(res.data);
+                // Assuming backend returns a starred property or check against user's starred list
+                setIsStarred(res.data.isStarred || false); 
             })
             .catch(err => console.error(err));
     }, [id]);
+
+    const toggleStar = async () => {
+        const previousState = isStarred;
+        setIsStarred(!previousState); // Optimistic UI update
+
+        try {
+            await axios.put(`/meeting/toggle-star/${id}`, {isStarred: !isStarred}, {
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+            });
+        } catch (err) {
+            console.error("Error starring meeting:", err);
+            setIsStarred(previousState); // Revert on failure
+        }
+    };
+
+    const markAsCompleted = async () => {
+        setUpdating(true);
+        try {
+            await axios.put(`/meeting/update-status/${id}`, 
+                { status: 'Done' }, 
+                { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }}
+            );
+            setMeeting({ ...meeting, status: 'Done' });
+        } catch (err) {
+            console.error("Error updating status:", err);
+        } finally {
+            setUpdating(false);
+        }
+    };
 
     if (!meeting) return <Loading />;
 
@@ -32,28 +64,65 @@ const MeetingDetails = () => {
                     onClick={() => navigate(-1)}
                     className="flex items-center gap-2 text-slate-500 hover:text-blue-600 font-bold text-sm transition-colors group"
                 >
-                    <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                    <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                    </svg>
                     Back to Dashboard
                 </button>
 
-                <div className="flex gap-3">
-                    <button className="bg-white border border-slate-200 text-slate-600 px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all flex items-center gap-2">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
-                        Print PDF
+                <div className="flex items-center gap-3">
+                    {/* STAR BUTTON */}
+                    <button 
+                        onClick={toggleStar}
+                        className={`p-2.5 rounded-xl border transition-all duration-300 flex items-center gap-2 font-bold text-sm ${
+                            isStarred 
+                            ? "bg-amber-50 border-amber-200 text-amber-500 shadow-lg shadow-amber-100" 
+                            : "bg-white border-slate-200 text-slate-400 hover:border-amber-300 hover:text-amber-400"
+                        }`}
+                    >
+                        <svg 
+                            className={`w-5 h-5 transition-transform ${isStarred ? "fill-amber-500 scale-110" : "fill-none"}`} 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.54 1.118l-3.976-2.888a1 1 0 00-1.175 0l-3.976 2.888c-.784.57-1.838-.196-1.539-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
+                        {isStarred ? "Starred" : "Star"}
                     </button>
+
+                    {meeting.status !== 'Done' ? (
+                        <button 
+                            onClick={markAsCompleted}
+                            disabled={updating}
+                            className="bg-emerald-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-600 shadow-lg shadow-emerald-100 transition-all flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {updating ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : "Mark as Completed"}
+                        </button>
+                    ) : (
+                        <div className="bg-emerald-50 text-emerald-600 border border-emerald-100 px-6 py-2.5 rounded-xl text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
+                            Completed
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* Main Document Card */}
+            {/* Main Document Card remains the same... */}
             <div className="bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
 
                 {/* Document Header */}
                 <div className="p-10 border-b border-slate-100 bg-slate-50/30">
                     <div className="flex justify-between items-start">
                         <div>
-                            <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-                                Official Minutes
-                            </span>
+                            <div className="flex items-center gap-3">
+                                <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                                    Official Minutes
+                                </span>
+                                {/* Status Indicator Badge */}
+                                <span className={`text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 rounded-full border ${meeting.status === 'Done' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                                    {meeting.status}
+                                </span>
+                            </div>
                             <h1 className="text-4xl font-black text-slate-800 mt-4 tracking-tight">
                                 {meeting.title}
                             </h1>
@@ -75,19 +144,17 @@ const MeetingDetails = () => {
                     </div>
                 </div>
 
-                {/* Document Body */}
+                {/* ... (rest of Document Body remains the same) ... */}
                 <div className="p-10 grid grid-cols-1 lg:grid-cols-3 gap-12">
-
-                    {/* Sidebar Info */}
                     <div className="lg:col-span-1 space-y-8">
                         <div>
                             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Organized By</h3>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">
-                                    {meeting.calledBy.email.charAt(0).toUpperCase()}
+                                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs uppercase">
+                                    {meeting.calledBy?.email.charAt(0)}
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold text-slate-800">{meeting.calledBy.email}</p>
+                                    <p className="text-sm font-bold text-slate-800">{meeting.calledBy?.email}</p>
                                     <p className="text-[10px] font-medium text-slate-400">Meeting Coordinator</p>
                                 </div>
                             </div>
@@ -97,7 +164,7 @@ const MeetingDetails = () => {
                             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Attendees ({meeting.members?.length})</h3>
                             <div className="flex flex-col gap-2">
                                 {meeting.members?.map((member, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 ...">
+                                    <div key={idx} className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
                                         <span className="text-xs font-semibold text-slate-600">
                                             {typeof member === 'object' ? member.email : member}
@@ -108,7 +175,6 @@ const MeetingDetails = () => {
                         </div>
                     </div>
 
-                    {/* Main Content */}
                     <div className="lg:col-span-2 space-y-10">
                         <section>
                             <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">

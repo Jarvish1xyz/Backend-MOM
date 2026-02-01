@@ -66,9 +66,27 @@ exports.getMyMeetings = async (req, res) => {
 exports.getMeetingDetail = async (req, res) => {
   try {
     const meeting = await Meeting.findOne({ meetingid: req.params.id }).populate("calledBy", "email username").populate("members", "email username");
-    console.log(meeting);
     res.json(meeting);
   } catch (err) {
     res.status(500).json({ err: "Failed to fetch meeting details" });
+  }
+}
+
+exports.updateStatus = async (req, res) => {
+  try {
+    const meeting = await Meeting.findOneAndUpdate({ meetingid: req.params.id }, {status:req.body.status}, {new:true});
+    res.json(meeting);
+  } catch (err) {
+    res.status(500).json({ err: "Failed to update meeting status" });
+  }
+}
+
+exports.updateStarred = async (req, res) => {
+  try {
+    console.log((req.body.isStarred));
+    const meeting = await Meeting.findOneAndUpdate({ meetingid: req.params.id }, {isStarred:req.body.isStarred}, {new:true});
+    res.json(meeting);
+  } catch (err) {
+    res.status(500).json({ err: "Failed to update meeting" });
   }
 }
