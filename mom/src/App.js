@@ -8,6 +8,7 @@ import AuthPage from './component/pages/Auth/AuthPage';
 import CreateMOM from './component/pages/CreateMOM/CreateMOM';
 import Profile from './component/pages/Content/Profile';
 import MeetingDetails from './component/pages/Content/MeetingDetails';
+import StarredMeeting from './component/pages/Content/StarredMeeting';
 
 function App() {
   const [isLogin, setIsLogin] = useState(!!localStorage.getItem('token'));
@@ -28,6 +29,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="create" element={<CreateMOM />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="starred" element={<StarredMeeting/>} />
             <Route path="meeting/:id" element={<MeetingDetails/>} />
           </Route>
         )}

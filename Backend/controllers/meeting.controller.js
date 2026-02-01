@@ -56,8 +56,8 @@ exports.getAllMeeting = async (req, res) => {
 
 exports.getMyMeetings = async (req, res) => {
   try {
-    const meetings = await User.findById(req.user.id).populate("meetings");
-    res.json({meetings: meetings.meetings});
+    const user = await User.findById(req.user.id).populate("meetings");
+    res.json({meetings: user.meetings});
   }catch(err) {
     res.status(500).json({err:err.message});
   }
@@ -81,12 +81,11 @@ exports.updateStatus = async (req, res) => {
   }
 }
 
-exports.updateStarred = async (req, res) => {
+exports.getStarredMeetings = async (req, res) => {
   try {
-    console.log((req.body.isStarred));
-    const meeting = await Meeting.findOneAndUpdate({ meetingid: req.params.id }, {isStarred:req.body.isStarred}, {new:true});
-    res.json(meeting);
-  } catch (err) {
-    res.status(500).json({ err: "Failed to update meeting" });
+    const user = await User.findById(req.user.id).populate("starredMeetings");
+    res.json({meetings: user.starredMeetings});
+  }catch(err) {
+    res.status(500).json({err:err.message});
   }
 }

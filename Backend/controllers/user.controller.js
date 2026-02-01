@@ -67,3 +67,43 @@ exports.updateMyMeetings = async (req, res) => {
     res.status(500).json({ err: err.message });
   }
 }
+
+exports.updateStarredMeetings = async (req, res) => {
+  try {
+    const { email, meetingid } = req.body;
+    console.log(req.body);
+
+    const meeting = await Meeting.findOne({ meetingid: meetingid });
+    console.log(meeting);
+
+    const user = await User.findOneAndUpdate(
+      { email: email },
+      { $push: { starredMeetings: meeting._id } },
+      { new: true }
+    );
+    console.log(user);
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+}
+
+exports.deleteStarredMeetings = async (req, res) => {
+  try {
+    const { email, meetingid } = req.body;
+    console.log(req.body);
+
+    const meeting = await Meeting.findOne({ meetingid: meetingid });
+    console.log(meeting);
+
+    const user = await User.findOneAndUpdate(
+      { email: email },
+      { $push: { starredMeetings: meeting._id } },
+      { new: true }
+    );
+    console.log(user);
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+}

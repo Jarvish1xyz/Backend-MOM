@@ -11,8 +11,7 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ["HR", "Admin", "Employee"], default: "Employee" },
     profileImg: String,
     meetings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Meeting" }],
-    pendingmeetings: { type: Number, default: 0 },
-    donemeetings: { type: Number, default: 0 }
+    starredMeetings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Meeting" }]
   },
   { timestamps: true }
 );
