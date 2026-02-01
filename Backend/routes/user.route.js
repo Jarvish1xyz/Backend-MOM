@@ -6,6 +6,6 @@ const { getMyProfile, updateProfile, updateMyMeetings } = require("../controller
 
 router.get("/profile", auth, getMyProfile);
 router.put("/profile/update", auth, upload.single("profileImg"), updateProfile);
-router.patch("/meeting/update/", updateMyMeetings)
+router.patch("/meeting/update/",auth, updateMyMeetings)
 
 module.exports = router;

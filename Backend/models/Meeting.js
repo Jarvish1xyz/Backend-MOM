@@ -10,6 +10,7 @@ const meetingSchema = new mongoose.Schema(
     calledBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     isStared: {type: Boolean, default: false},
+    status: {type: String, enum: ['Pending', 'Done'], default: 'Pending'}
   },
   { timestamps: true }
 );

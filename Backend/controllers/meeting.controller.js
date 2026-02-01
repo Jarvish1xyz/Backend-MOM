@@ -56,10 +56,19 @@ exports.getAllMeeting = async (req, res) => {
 
 exports.getMyMeetings = async (req, res) => {
   try {
-    const meetings = await User.findOne({email:req.body.email}).populate("meetings");
-    console.log(meetings);
-    res.json({meetings});
+    const meetings = await User.findById(req.user.id).populate("meetings");
+    res.json({meetings: meetings.meetings});
   }catch(err) {
     res.status(500).json({err:err.message});
+  }
+}
+
+exports.getMeetingDetail = async (req, res) => {
+  try {
+    const meeting = await Meeting.findOne({ meetingid: req.params.id }).populate("calledBy", "email username").populate("members", "email username");
+    console.log(meeting);
+    res.json(meeting);
+  } catch (err) {
+    res.status(500).json({ err: "Failed to fetch meeting details" });
   }
 }
