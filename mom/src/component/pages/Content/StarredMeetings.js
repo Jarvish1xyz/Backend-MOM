@@ -12,7 +12,7 @@ function StarredMeetings() {
     // We assume your backend has an endpoint for starred items
     // or you can filter them from all meetings
     axios
-      .get("/meeting/mymeetings", {
+      .get("/meeting/mymeetings/starred", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {

@@ -63,10 +63,23 @@ exports.getMyMeetings = async (req, res) => {
   }
 }
 
+exports.getMyStarredMeetings = async (req, res) => {
+  try {
+    const meetings = await User.findById(req.user.id).populate("starredMeetings");
+    res.json({meetings: meetings.starredMeetings});
+  }catch(err) {
+    res.status(500).json({err:err.message});
+  }
+}
+
 exports.getMeetingDetail = async (req, res) => {
   try {
-    const meeting = await Meeting.findOne({ meetingid: req.params.id }).populate("calledBy", "email username").populate("members", "email username");
-    res.json(meeting);
+    console.log(req.user);
+    const stared = await User.findById(req.user.id).populate("starredMeetings", "meetingid");
+    console.log(stared);
+    const meeting = await Meeting.findOne({ meetingid: req.params.id }).populate("calledBy", "email username").populate("members", "email username starredMeetings");
+    console.log({ starforUser: stared.starredMeetings.some(m => m.meetingid === Number(req.params.id))});
+    res.json({meeting, starforUser: stared.starredMeetings.some(m => m.meetingid === Number(req.params.id))});
   } catch (err) {
     res.status(500).json({ err: "Failed to fetch meeting details" });
   }

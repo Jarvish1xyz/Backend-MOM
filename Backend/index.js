@@ -26,7 +26,7 @@ app.use("/auth", auth);
 app.use('/user', user);
 app.use('/meeting', Meeting);
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log("server started @ 5000");
 })
 

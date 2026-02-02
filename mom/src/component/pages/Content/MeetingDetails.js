@@ -12,16 +12,16 @@ const MeetingDetails = () => {
     const [updating, setUpdating] = useState(false);
     const [isStarred, setIsStarred] = useState(false); // Track star status locally
 
-    useEffect(() => {
+    useEffect( () => {
         axios
-            .get(`/meeting/details/${id}`, {
+            .get(`/meeting/details/${id}`,{
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             })
             .then((res) => {
-                setMeeting(res.data);
-                setDateObj(new Date(res.data.Date));
+                setMeeting(res.data.meeting);
+                setDateObj(new Date(res.data.meeting.Date));
                 // Assuming backend returns a starred property or check against user's starred list
-                setIsStarred(res.data.isStarred || false);
+                setIsStarred(res.data.starforUser || false);
             })
             .catch((err) => console.error(err));
     }, [id]);
@@ -35,7 +35,6 @@ const MeetingDetails = () => {
                 await axios.patch(
                     `/user/meeting/starred/`,
                     {
-                        isStarred: !previousState,
                         email: user.email,
                         meetingid: id,
                     },
@@ -48,7 +47,6 @@ const MeetingDetails = () => {
                 await axios.put(
                     `/user/meeting/starred/`,
                     {
-                        isStarred: !previousState,
                         email: user.email,
                         meetingid: id,
                     },
