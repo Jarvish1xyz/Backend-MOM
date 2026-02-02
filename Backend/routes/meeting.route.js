@@ -10,6 +10,5 @@ MeetingRoute.get('/all', authMiddleware, getAllMeeting);
 MeetingRoute.get('/mymeetings', authMiddleware, getMyMeetings);
 MeetingRoute.get('/details/:id', authMiddleware, getMeetingDetail);
 MeetingRoute.put('/update-status/:id', authMiddleware, updateStatus);
-MeetingRoute.get('/mymeetings/starred', authMiddleware, getStarredMeetings);
 
 module.exports = MeetingRoute;

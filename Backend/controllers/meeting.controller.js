@@ -80,12 +80,3 @@ exports.updateStatus = async (req, res) => {
     res.status(500).json({ err: "Failed to update meeting status" });
   }
 }
-
-exports.getStarredMeetings = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).populate("starredMeetings");
-    res.json({meetings: user.starredMeetings});
-  }catch(err) {
-    res.status(500).json({err:err.message});
-  }
-}

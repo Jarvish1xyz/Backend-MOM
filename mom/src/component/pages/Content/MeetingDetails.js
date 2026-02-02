@@ -45,7 +45,7 @@ const MeetingDetails = () => {
                 );
             }
             else {
-                await axios.delete(
+                await axios.put(
                     `/user/meeting/starred/`,
                     {
                         isStarred: !previousState,

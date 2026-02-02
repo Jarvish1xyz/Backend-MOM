@@ -71,7 +71,9 @@ exports.updateMyMeetings = async (req, res) => {
 exports.updateStarredMeetings = async (req, res) => {
   try {
     const { email, meetingid } = req.body;
-    console.log(req.body);
+    console.log("update" + req.body);
+
+    const star = await Meeting.findOneAndUpdate({ meetingid: req.body.meetingid }, {isStarred:req.body.isStarred}, {new:true});
 
     const meeting = await Meeting.findOne({ meetingid: meetingid });
     console.log(meeting);
@@ -92,13 +94,15 @@ exports.deleteStarredMeetings = async (req, res) => {
   try {
     const { email, meetingid } = req.body;
     console.log(req.body);
+    
+    const star = await Meeting.findOneAndUpdate({ meetingid: req.body.meetingid }, {isStarred:req.body.isStarred}, {new:true});
 
     const meeting = await Meeting.findOne({ meetingid: meetingid });
     console.log(meeting);
 
     const user = await User.findOneAndUpdate(
       { email: email },
-      { $push: { starredMeetings: meeting._id } },
+      { $pull: { starredMeetings: meeting._id } },
       { new: true }
     );
     console.log(user);
