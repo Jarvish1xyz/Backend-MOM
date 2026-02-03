@@ -9,8 +9,11 @@ import CreateMOM from './component/pages/CreateMOM/CreateMOM';
 import Profile from './component/pages/Content/Profile';
 import MeetingDetails from './component/pages/Content/MeetingDetails';
 import StarredMeetings from './component/pages/Content/StarredMeetings';
+import AdminPanel from './component/pages/Content/AdminPanel';
+import AdminProfile from './component/pages/Content/AdminProfile';
 
 function App() {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   const [isLogin, setIsLogin] = useState(!!localStorage.getItem('token'));
 
   const handleAuthChange = () => {
@@ -26,11 +29,12 @@ function App() {
         ) : (
           /* 🏠 PROTECTED ROUTES */
           <Route path="/" element={<Layout onLogout={handleAuthChange} />}>
-            <Route index element={<Home />} />
+            <Route index element={user.role === "Admin" ? <AdminPanel /> : <Home />} />
             <Route path="create" element={<CreateMOM />} />
             <Route path="profile" element={<Profile />} />
             <Route path="starred" element={<StarredMeetings/>} />
             <Route path="meeting/:id" element={<MeetingDetails/>} />
+            <Route path="userprofile/:id" element={<AdminProfile/>} />
           </Route>
         )}
 

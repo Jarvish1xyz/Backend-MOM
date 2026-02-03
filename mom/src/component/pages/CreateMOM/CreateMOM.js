@@ -150,7 +150,7 @@ function CreateMOM() {
             Discard
           </button>
           <button onClick={save} className="bg-blue-600 text-white px-8 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
-            Save & Publish
+            Save Meeting
           </button>
         </div>
       </div>

@@ -11,6 +11,15 @@ exports.getMyProfile = async (req, res) => {
   }
 };
 
+exports.getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findOne({userid:req.params.id}).select("-password");
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+}
+
 // 🔹 UPDATE MY PROFILE
 exports.updateProfile = async (req, res) => {
   try {

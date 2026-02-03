@@ -9,6 +9,7 @@ const app = express();
 const port = process.env.PORT;
 const url = process.env.MONGOURL;
 const path = require('path');
+const AdminRoute = require('./routes/admin.route');
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
@@ -25,6 +26,7 @@ mongoose.connect(url).then(()=> {
 app.use("/auth", auth);
 app.use('/user', user);
 app.use('/meeting', Meeting);
+app.use('/admin', AdminRoute);
 
 app.listen(port, '0.0.0.0', () => {
     console.log("server started @ 5000");

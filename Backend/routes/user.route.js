@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth.middleware");
 const upload = require("../middleware/updateProfile");
-const { getMyProfile, updateProfile, updateMyMeetings, updateStarredMeetings, deleteStarredMeetings } = require("../controllers/user.controller");
+const { getMyProfile, updateProfile, updateMyMeetings, updateStarredMeetings, deleteStarredMeetings, getUserProfile } = require("../controllers/user.controller");
 
 router.get("/profile", auth, getMyProfile);
+router.get("/profile/:id", auth, getUserProfile);
 router.put("/profile/update", auth, upload.single("profileImg"), updateProfile);
 router.patch("/meeting/update/",auth, updateMyMeetings);
 router.patch("/meeting/starred/",auth, updateStarredMeetings);

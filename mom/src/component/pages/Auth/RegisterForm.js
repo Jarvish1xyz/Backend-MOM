@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-function RegisterForm({ onClickCheck, isVisible }) {
+function RegisterForm({ onClickCheck, isVisible, onToggle }) {
     const [form, setForm] = useState({
         email: "",
         username: "",
@@ -15,9 +15,9 @@ function RegisterForm({ onClickCheck, isVisible }) {
 
     const register = async () => {
         try {
-            console.log(form);
             await axios.post("/auth/register", form);
             onClickCheck()
+            onToggle()
         } catch (err) {
             alert(err.response?.data?.msg || "Registration failed");
         }
@@ -31,7 +31,7 @@ function RegisterForm({ onClickCheck, isVisible }) {
         <AuthField placeholder="Username" name="username" type="text" onChange={handleChange} />
         <AuthField placeholder="Password" name="password" type="password" onChange={handleChange} />
         <AuthField placeholder="Confirm password" name="confirmPassword" type="password" onChange={handleChange} />
-        <button onClick={register} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95">
+        <button onClick={register} className="w-full cursor-pointer bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95">
           Register
         </button>
       </div>

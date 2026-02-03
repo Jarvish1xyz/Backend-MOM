@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Loading from "../Layout/Loading";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Profile = () => {
+  const { id } = useParams();
   const [user, setUser] = useState(null);
   const [edit, setEdit] = useState(false);
   const [form, setForm] = useState({});
@@ -14,17 +15,18 @@ const Profile = () => {
   useEffect(() => {
     try {
       axios
-        .get("/user/profile", {
+        .get(`/user/profile/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => {
           setUser(res.data);
           setForm(res.data);
+          console.log(res.data);
         });
     } catch (err) {
       console.log(err.response?.data);
     }
-  }, []);
+  }, [id]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -104,7 +106,7 @@ const Profile = () => {
         {!edit ? (
           <button
             onClick={() => setEdit(true)}
-            className="bg-white border border-slate-200 text-slate-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
+            className="bg-white cursor-pointer border border-slate-200 text-slate-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-600 hover:text-white transition-all shadow-sm"
           >
             Edit Profile
           </button>
@@ -112,7 +114,7 @@ const Profile = () => {
           <div className="flex gap-2">
             <button
               onClick={saveProfile}
-              className="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all"
+              className="bg-blue-600 cursor-pointer text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all"
             >
               Save Changes
             </button>
@@ -121,7 +123,7 @@ const Profile = () => {
                 setEdit(false);
                 setSelectedFile(null);
               }}
-              className="bg-white border border-slate-200 text-slate-400 px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all"
+              className="bg-white cursor-pointer border border-slate-200 text-slate-400 px-4 py-2 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all"
             >
               Cancel
             </button>
@@ -206,7 +208,13 @@ const Profile = () => {
                   value={form.username || user.username}
                   disabled={!edit}
                 />
-                <Field label="Email Address" value={user.email} disabled />
+                <Field
+                  label="Email Address"
+                  name="email"
+                  onChange={handleChange}
+                  value={form.email || user.email}
+                  disabled={!edit}
+                />
               </div>
 
               <div className="space-y-6 pt-4 border-t border-slate-50">
@@ -221,8 +229,9 @@ const Profile = () => {
                 <Field
                   label="Designation / Role"
                   name="role"
-                  value={user.role}
-                  disabled
+                  value={form.role || ""}
+                  onChange={handleChange}
+                  disabled={!edit}
                 />
 
                 {edit && (

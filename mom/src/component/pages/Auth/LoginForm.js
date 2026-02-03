@@ -24,7 +24,7 @@ function LoginForm({ onClickCheck, isVisible }) {
         <AuthField placeholder="Username" name="username" type="text" onChange={handleChange} />
         <AuthField placeholder="Password" name="password" type="password" onChange={handleChange} />
         <p className="text-right text-xs font-bold text-slate-400 hover:text-blue-600 cursor-pointer transition-colors">Forgot Password?</p>
-        <button onClick={login} className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95">
+        <button onClick={login} className="w-full cursor-pointer bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95">
           LOG IN
         </button>
       </div>
