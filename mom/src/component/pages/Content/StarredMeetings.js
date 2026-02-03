@@ -17,7 +17,7 @@ function StarredMeetings() {
       })
       .then((res) => {
         // Filtering only the starred ones
-        const starred = res.data.meetings.filter(m => m.isStarred);
+        const starred = res.data.meetings;
         setStarredMeetings(starred);
         setLoading(false);
       })
