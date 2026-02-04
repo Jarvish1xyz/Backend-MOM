@@ -49,7 +49,7 @@ function Home() {
         {(user.role === "HR" || user.role === "Admin") && (
           <button
             onClick={() => navigate("/create")}
-            className="group relative flex items-center gap-2 bg-blue-600 text-white px-7 py-3.5 rounded-2xl font-bold shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all hover:-translate-y-1 active:scale-95"
+            className="group cursor-pointer relative flex items-center gap-2 bg-blue-600 text-white px-7 py-3.5 rounded-2xl font-bold shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all hover:-translate-y-1 active:scale-95"
           >
             <span className="text-xl leading-none">+</span>
             Create Meeting
@@ -203,7 +203,7 @@ function Home() {
 
                   <button
                     onClick={() => navigate(`/meeting/${m.meetingid}`)}
-                    className="bg-slate-50 text-slate-500 border border-slate-200 px-5 py-2 rounded-xl font-bold text-[11px] uppercase tracking-wider hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:shadow-lg hover:shadow-blue-100 transition-all duration-300"
+                    className="bg-slate-50 cursor-pointer text-slate-500 border border-slate-200 px-5 py-2 rounded-xl font-bold text-[11px] uppercase tracking-wider hover:bg-blue-600 hover:text-white hover:border-blue-600 hover:shadow-lg hover:shadow-blue-100 transition-all duration-300"
                   >
                     View Details
                   </button>
