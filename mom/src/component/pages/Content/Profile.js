@@ -200,6 +200,13 @@ const Profile = () => {
             <div className="p-8 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Field
+                  label="Name"
+                  name="name"
+                  onChange={handleChange}
+                  value={form.name || user.name}
+                  disabled={!edit}
+                />
+                <Field
                   label="Username"
                   name="username"
                   onChange={handleChange}

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const meetingSchema = new mongoose.Schema(
   {
     title: String,
-    meetingid: { type: Number, unique: true },
+    meetingid: { type: String, unique: true },
     Date: { type: Date, required: true },
     agenda: String,
     note: String,
