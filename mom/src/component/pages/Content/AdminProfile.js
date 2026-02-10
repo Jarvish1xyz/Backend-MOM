@@ -53,15 +53,13 @@ const Profile = () => {
         formData.append("profileImg", selectedFile);
       }
 
-      const res = await axios.put("/user/profile/update", formData, {
+      const res = await axios.put(`/user/profile/update/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "multipart/form-data",
         },
       });
 
-      localStorage.removeItem("user");
-      localStorage.setItem("user", JSON.stringify(res.data.user));
       setUser(res.data.user);
       setEdit(false);
       setSelectedFile(null);

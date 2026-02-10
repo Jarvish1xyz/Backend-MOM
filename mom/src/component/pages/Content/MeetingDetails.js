@@ -12,11 +12,14 @@ const MeetingDetails = () => {
     const [updating, setUpdating] = useState(false);
     const [isStarred, setIsStarred] = useState(false); // Track star status locally
 
-    useEffect( () => {
+    useEffect(() => {
         axios
-            .get(`/meeting/details/${id}`,{
-                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-            })
+            .get(
+                `https://probable-meme-g474x6r4v95v2wxjv-5000.app.github.dev/meeting/details/${id}`,
+                {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                },
+            )
             .then((res) => {
                 setMeeting(res.data.meeting);
                 setDateObj(new Date(res.data.meeting.Date));
@@ -39,11 +42,12 @@ const MeetingDetails = () => {
                         meetingid: id,
                     },
                     {
-                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
                     },
                 );
-            }
-            else {
+            } else {
                 await axios.put(
                     `/user/meeting/starred/`,
                     {
@@ -51,9 +55,11 @@ const MeetingDetails = () => {
                         meetingid: id,
                     },
                     {
-                        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`,
+                        },
                     },
-                )
+                );
             }
         } catch (err) {
             console.error("Error starring meeting:", err);
@@ -72,6 +78,23 @@ const MeetingDetails = () => {
                 },
             );
             setMeeting({ ...meeting, status: "Done" });
+        } catch (err) {
+            console.error("Error updating status:", err);
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const deleteMeeting = async () => {
+        setUpdating(true);
+        try {
+            await axios.delete(
+                `/meeting/delete/${id}`,
+                {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                },
+            );
+            navigate("/dashboard");
         } catch (err) {
             console.error("Error updating status:", err);
         } finally {
@@ -294,6 +317,20 @@ const MeetingDetails = () => {
                             </div>
                         </section>
                     </div>
+                    {(user.role === "HR" || user.role === "Admin") && (
+                        
+                            <button
+                                onClick={deleteMeeting}
+                                disabled={updating}
+                                className="bg-red-500 w-40 text-white px-4 py-2.5 rounded-xl text-sm justify-center font-bold hover:bg-red-600 shadow-lg shadow-emerald-100 transition-all flex items-center gap-2 disabled:opacity-50"
+                            >
+                                {updating ? (
+                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                ) : (
+                                    "Delete Meeting"
+                                )}
+                            </button>
+                        )}
                 </div>
 
                 {/* Footer Branding */}

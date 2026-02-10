@@ -44,6 +44,8 @@ const Profile = () => {
     try {
       // Use FormData to support file upload
       const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("username", form.username);
       formData.append("phone", form.phone);
       formData.append("role", form.role);
 

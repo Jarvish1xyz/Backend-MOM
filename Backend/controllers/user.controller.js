@@ -23,6 +23,44 @@ exports.getUserProfile = async (req, res) => {
 // 🔹 UPDATE MY PROFILE
 exports.updateProfile = async (req, res) => {
   try {
+    const { name, username, phone, role } = req.body;
+    console.log(req.body);
+    console.log(req.file);
+    
+
+    const updateData = {
+      name,
+      username,
+      phone,
+      role
+    };
+
+    // 🔹 If profile image uploaded
+    if (req.file) {
+      updateData.profileImg = `/uploads/profile/${req.file.filename}`;
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      updateData,
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({
+      success: true,
+      user
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+exports.updateUserProfile = async (req, res) => {
+  try {
     const { phone, role } = req.body;
     console.log(req.body);
     console.log(req.file);
@@ -38,8 +76,8 @@ exports.updateProfile = async (req, res) => {
       updateData.profileImg = `/uploads/profile/${req.file.filename}`;
     }
 
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
+    const user = await User.findOneAndUpdate(
+      {userid: req.params.id},
       updateData,
       { new: true }
     ).select("-password");

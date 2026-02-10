@@ -72,17 +72,28 @@ exports.getMyStarredMeetings = async (req, res) => {
   }
 }
 
+
 exports.getMeetingDetail = async (req, res) => {
   try {
-    const stared = await User.findById(req.user.id).populate("starredMeetings", "meetingid");
-    
-    const meeting = await Meeting.findOne({ meetingid: req.params.id }).populate("calledBy", "email username").populate("members", "email username starredMeetings");
-    
-    res.json({meeting, starforUser: stared.starredMeetings.some(m => m.meetingid === Number(req.params.id))});
+    const user = await User.findById(req.user.id).populate("starredMeetings", "meetingid");
+    if (!user) return res.status(404).json({ err: "User not found" });
+
+    const meeting = await Meeting.findOne({ meetingid: (req.params.id) })
+      .populate("calledBy", "email username")
+      .populate("members", "email username starredMeetings");
+
+    if (!meeting) {
+      return res.status(404).json({ err: "Meeting not found" });
+    }
+
+    const starredList = user.starredMeetings || [];
+    const isStarred = starredList.some(m => (m.meetingid) === (req.params.id));
+
+    res.json({ meeting, starforUser: isStarred });
   } catch (err) {
-    res.status(500).json({ err: "Failed to fetch meeting details" });
+    res.status(500).json({ err: err.message });
   }
-}
+};
 
 exports.updateStatus = async (req, res) => {
   try {
@@ -90,5 +101,14 @@ exports.updateStatus = async (req, res) => {
     res.json(meeting);
   } catch (err) {
     res.status(500).json({ err: "Failed to update meeting status" });
+  }
+}
+
+exports.deleteMeeting = async (req, res) => {
+  try {
+    const meeting = await Meeting.findOneAndDelete({ meetingid: req.params.id });
+    res.json(meeting);
+  } catch (err) {
+    res.status(500).json({ err: "Failed to delete meeting" });
   }
 }
