@@ -38,11 +38,11 @@ function StarredMeetings() {
           <div className="flex items-center gap-3">
             <h1 className="text-4xl font-black text-slate-900 tracking-tight">Starred</h1>
             <span className="bg-amber-100 text-amber-600 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mt-1">
-               Favorites
+               Important
             </span>
           </div>
           <p className="text-slate-500 font-medium mt-1">
-            Access your most important meeting minutes quickly.
+            Access your most important meeting quickly.
           </p>
         </div>
         <button 

@@ -21,7 +21,7 @@ const Profile = () => {
         .then((res) => {
           setUser(res.data);
           setForm(res.data);
-          console.log(res.data);
+          // console.log(res.data);
         });
     } catch (err) {
       console.log(err.response?.data);
@@ -200,6 +200,13 @@ const Profile = () => {
             <div className="p-8 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Field
+                  label="Name"
+                  name="name"
+                  onChange={handleChange}
+                  value={form.name || user.name}
+                  disabled={!edit}
+                />
+                <Field
                   label="Username"
                   name="username"
                   onChange={handleChange}
@@ -224,10 +231,12 @@ const Profile = () => {
                   disabled={!edit}
                 />
 
+                {/* UPDATED ROLE FIELD: Uses the Sliding Toggle */}
                 <Field
                   label="Designation / Role"
                   name="role"
-                  value={form.role || ""}
+                  type="slider"
+                  value={form.role || user.role}
                   onChange={handleChange}
                   disabled={!edit}
                 />
@@ -246,21 +255,56 @@ const Profile = () => {
   );
 };
 
-const Field = ({ label, disabled, ...props }) => (
+const Field = ({ label, disabled, type, name, value, onChange, ...props }) => (
   <div className="group">
     <label className="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">
       {label}
     </label>
-    <input
-      {...props}
-      disabled={disabled}
-      className={`w-full px-5 py-3 rounded-2xl border transition-all text-sm font-semibold
-        ${
-          disabled
+
+    {type === "slider" ? (
+      <div className={`relative flex items-center p-1 bg-slate-100 rounded-2xl w-full max-w-full transition-opacity ${disabled ? 'opacity-60 grayscale' : 'opacity-100'}`}>
+        {/* Sliding Background */}
+        <div
+          className={`absolute h-8 w-[48%] bg-white rounded-xl shadow-sm transition-all duration-300 ease-in-out transform ${value === "Employee" ? "translate-x-[104%]" : "translate-x-0"
+            }`}
+        />
+
+        {/* HR Option */}
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => !disabled && onChange({ target: { name, value: "HR" } })}
+          className={`relative z-10 flex-1 py-2 cursor-pointer text-xs font-black tracking-widest transition-colors ${value === "HR" ? "text-blue-600" : "text-slate-400"
+            }`}
+        >
+          HR
+        </button>
+
+        {/* Employee Option */}
+        <button
+          type="button"
+          disabled={disabled}
+          onClick={() => !disabled && onChange({ target: { name, value: "Employee" } })}
+          className={`relative z-10 flex-1 py-2 cursor-pointer text-xs font-black tracking-widest transition-colors ${value === "Employee" ? "text-blue-600" : "text-slate-400"
+            }`}
+        >
+          EMPLOYEE
+        </button>
+      </div>
+    ) : (
+      <input
+        {...props}
+        name={name}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        className={`w-full px-5 py-3 rounded-2xl border transition-all text-sm font-semibold
+          ${disabled
             ? "bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed"
             : "bg-white border-slate-200 text-slate-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 outline-none hover:border-slate-300 shadow-sm"
-        }`}
-    />
+          }`}
+      />
+    )}
   </div>
 );
 

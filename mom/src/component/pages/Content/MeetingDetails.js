@@ -14,9 +14,7 @@ const MeetingDetails = () => {
 
     useEffect(() => {
         axios
-            .get(
-                `https://probable-meme-g474x6r4v95v2wxjv-5000.app.github.dev/meeting/details/${id}`,
-                {
+            .get(`/meeting/details/${id}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
                 },
             )
@@ -132,9 +130,9 @@ const MeetingDetails = () => {
                     {/* STAR BUTTON */}
                     <button
                         onClick={toggleStar}
-                        className={`p-2.5 rounded-xl border transition-all duration-300 flex items-center gap-2 font-bold text-sm ${isStarred
-                                ? "bg-amber-50 border-amber-200 text-amber-500 shadow-lg shadow-amber-100"
-                                : "bg-white border-slate-200 text-slate-400 hover:border-amber-300 hover:text-amber-400"
+                        className={`p-2.5 rounded-xl cursor-pointer border transition-all duration-300 flex items-center gap-2 font-bold text-sm ${isStarred
+                            ? "bg-amber-50 border-amber-200 text-amber-500 shadow-lg shadow-amber-100"
+                            : "bg-white border-slate-200 text-slate-400 hover:border-amber-300 hover:text-amber-400"
                             }`}
                     >
                         <svg
@@ -157,7 +155,7 @@ const MeetingDetails = () => {
                             <button
                                 onClick={markAsCompleted}
                                 disabled={updating}
-                                className="bg-emerald-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-600 shadow-lg shadow-emerald-100 transition-all flex items-center gap-2 disabled:opacity-50"
+                                className="bg-emerald-500 cursor-pointer text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-600 shadow-lg shadow-emerald-100 transition-all flex items-center gap-2 disabled:opacity-50"
                             >
                                 {updating ? (
                                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -318,19 +316,19 @@ const MeetingDetails = () => {
                         </section>
                     </div>
                     {(user.role === "HR" || user.role === "Admin") && (
-                        
-                            <button
-                                onClick={deleteMeeting}
-                                disabled={updating}
-                                className="bg-red-500 w-40 text-white px-4 py-2.5 rounded-xl text-sm justify-center font-bold hover:bg-red-600 shadow-lg shadow-emerald-100 transition-all flex items-center gap-2 disabled:opacity-50"
-                            >
-                                {updating ? (
-                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                                ) : (
-                                    "Delete Meeting"
-                                )}
-                            </button>
-                        )}
+
+                        <button
+                            onClick={deleteMeeting}
+                            disabled={updating}
+                            className="bg-red-500 w-40 cursor-pointer text-white px-4 py-2.5 rounded-xl text-sm justify-center font-bold hover:bg-red-600 shadow-lg shadow-emerald-100 transition-all flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {updating ? (
+                                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                            ) : (
+                                "Delete Meeting"
+                            )}
+                        </button>
+                    )}
                 </div>
 
                 {/* Footer Branding */}

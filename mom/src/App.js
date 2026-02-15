@@ -79,7 +79,7 @@ function App() {
               index
               element={user.role === "Admin" ? <AdminPanel /> : <Home />}
             />
-            <Route path="create" element={<CreateMOM />} />
+            <Route path="create-meeting" element={<CreateMOM />} />
             <Route path="profile" element={<Profile />} />
             <Route path="starred" element={<StarredMeetings />} />
             <Route path="meeting/:id" element={<MeetingDetails />} />

@@ -1,6 +1,15 @@
 const Meeting = require("../models/Meeting");
 const User = require("../models/User");
 
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+}
+
 // 🔹 GET MY PROFILE
 exports.getMyProfile = async (req, res) => {
   try {
@@ -13,7 +22,7 @@ exports.getMyProfile = async (req, res) => {
 
 exports.getUserProfile = async (req, res) => {
   try {
-    const user = await User.findOne({userid:req.params.id}).select("-password");
+    const user = await User.findOne({ userid: req.params.id }).select("-password");
     res.json(user);
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -24,9 +33,9 @@ exports.getUserProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
   try {
     const { name, username, phone, role } = req.body;
-    console.log(req.body);
-    console.log(req.file);
-    
+    // console.log(req.body);
+    // console.log(req.file);
+
 
     const updateData = {
       name,
@@ -62,9 +71,9 @@ exports.updateProfile = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
   try {
     const { phone, role } = req.body;
-    console.log(req.body);
-    console.log(req.file);
-    
+    // console.log(req.body);
+    // console.log(req.file);
+
 
     const updateData = {
       phone,
@@ -77,7 +86,7 @@ exports.updateUserProfile = async (req, res) => {
     }
 
     const user = await User.findOneAndUpdate(
-      {userid: req.params.id},
+      { userid: req.params.id },
       updateData,
       { new: true }
     ).select("-password");
@@ -98,17 +107,17 @@ exports.updateUserProfile = async (req, res) => {
 exports.updateMyMeetings = async (req, res) => {
   try {
     const { email, meetingid } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
 
     const meeting = await Meeting.findOne({ meetingid: meetingid });
-    console.log(meeting);
+    // console.log(meeting);
 
     const user = await User.findOneAndUpdate(
       { email: email },
       { $push: { meetings: meeting._id } },
       { new: true }
     );
-    console.log(user);
+    // console.log(user);
     res.json({ user });
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -138,9 +147,9 @@ exports.updateStarredMeetings = async (req, res) => {
 exports.deleteStarredMeetings = async (req, res) => {
   try {
     const { email, meetingid } = req.body;
-    console.log(req.body);
-    
-    const star = await Meeting.findOneAndUpdate({ meetingid: req.body.meetingid }, {isStarred:req.body.isStarred}, {new:true});
+    // console.log(req.body);
+
+    const star = await Meeting.findOneAndUpdate({ meetingid: req.body.meetingid }, { isStarred: req.body.isStarred }, { new: true });
 
     const meeting = await Meeting.findOne({ meetingid: meetingid });
     // console.log(meeting);
@@ -150,7 +159,7 @@ exports.deleteStarredMeetings = async (req, res) => {
       { $pull: { starredMeetings: meeting._id } },
       { new: true }
     );
-    console.log(user);
+    // console.log(user);
     res.json({ user });
   } catch (err) {
     res.status(500).json({ err: err.message });

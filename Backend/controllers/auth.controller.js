@@ -37,7 +37,7 @@ exports.register = async (req, res) => {
       role: "Employee"
     });
 
-    console.log(user);
+    // console.log(user);
 
     res.status(201).json({
       msg: "User registered successfully",
@@ -49,7 +49,7 @@ exports.register = async (req, res) => {
     });
 
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({ err: err.message });
   }
 };
@@ -76,7 +76,8 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       {
         id: user._id,
-        role: user.role
+        role: user.role,
+        email: user.email
       },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }

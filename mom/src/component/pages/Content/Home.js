@@ -22,6 +22,7 @@ function Home() {
         console.log(err.message);
         setLoading(false);
       });
+      localStorage.removeItem("isGoogle");
   }, []);
 
   // --- DYNAMIC STATE LOGIC ---
@@ -48,7 +49,7 @@ function Home() {
         </div>
         {(user.role === "HR" || user.role === "Admin") && (
           <button
-            onClick={() => navigate("/create")}
+            onClick={() => navigate("/create-meeting")}
             className="group cursor-pointer relative flex items-center gap-2 bg-blue-600 text-white px-7 py-3.5 rounded-2xl font-bold shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all hover:-translate-y-1 active:scale-95"
           >
             <span className="text-xl leading-none">+</span>

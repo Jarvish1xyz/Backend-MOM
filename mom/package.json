@@ -15,7 +15,7 @@
     "react-snowfall": "^2.4.0",
     "web-vitals": "^2.1.4"
   },
-  "proxy": "https://probable-meme-g474x6r4v95v2wxjv-5000.app.github.dev/",
+  "proxy": "https://probable-meme-g474x6r4v95v2wxjv-5000.app.github.dev",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
