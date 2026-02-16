@@ -23,6 +23,8 @@ function Home() {
         setLoading(false);
       });
       localStorage.removeItem("isGoogle");
+      localStorage.removeItem("meetingDraft");
+      localStorage.removeItem("participantsDraft");
   }, []);
 
   // --- DYNAMIC STATE LOGIC ---

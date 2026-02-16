@@ -36,8 +36,12 @@ function CreateMOM() {
     if (draft) {
       const parsed = JSON.parse(draft);
       setFormData(parsed);
-      if (parsed.allMembers) setParticipants(parsed.allMembers);
+      const participantsDraft = localStorage.getItem("participantsDraft");
+      if (participantsDraft) {
+        setParticipants(JSON.parse(participantsDraft));
+      }
       localStorage.removeItem("meetingDraft");
+      localStorage.removeItem("participantsDraft");
       localStorage.setItem("isGoogle", "true");
     }
   }, []);
@@ -72,7 +76,11 @@ function CreateMOM() {
 
     localStorage.setItem(
       "meetingDraft",
-      JSON.stringify({ ...formData, allMembers: participants })
+      JSON.stringify(formData)
+    );
+    localStorage.setItem(
+      "participantsDraft",
+      JSON.stringify(participants)
     );
     const token = localStorage.getItem("token");
 
@@ -142,7 +150,8 @@ function CreateMOM() {
               alt="Google Calendar"
               className="w-5 h-5"
             />
-            Schedule with Google Meet
+            {localStorage.getItem("isGoogle") === "true" ? "Save to confirm" : "Schedule with Google Meet"}
+            
           </button>
         )}
       </div>
