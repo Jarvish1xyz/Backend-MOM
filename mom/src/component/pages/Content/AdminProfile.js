@@ -46,8 +46,12 @@ const Profile = () => {
     try {
       // Use FormData to support file upload
       const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("username", form.username);
       formData.append("phone", form.phone);
+      formData.append("email", form.email);
       formData.append("role", form.role);
+      formData.append("department", form.department);
 
       if (selectedFile) {
         formData.append("profileImg", selectedFile);
@@ -218,6 +222,13 @@ const Profile = () => {
                   name="email"
                   onChange={handleChange}
                   value={form.email || user.email}
+                  disabled={!edit}
+                />
+                <Field
+                  label="Department"
+                  name="department"
+                  onChange={handleChange}
+                  value={form.department || user.department || "New Added"}
                   disabled={!edit}
                 />
               </div>

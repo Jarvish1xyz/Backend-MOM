@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
       enum: ["HR", "Admin", "Employee"],
       default: "Employee",
     },
+    department: String,
     profileImg: String,
     meetings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Meeting" }],
     starredMeetings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Meeting" }],

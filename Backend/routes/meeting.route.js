@@ -1,11 +1,12 @@
 const express = require('express');
 const MeetingRoute = express.Router();
-const { addMeeting, getAllMeeting, getMyMeetings, getMeetingDetail, updateStatus, getMyStarredMeetings, deleteMeeting } = require('../controllers/meeting.controller');
+const { addMeeting, getAllMeeting, getMyMeetings, getMeetingDetail, updateStatus, getMyStarredMeetings, deleteMeeting, updateMeeting } = require('../controllers/meeting.controller');
 const authMiddleware = require('../middleware/auth.middleware');
 
 MeetingRoute.use(express.json());
 MeetingRoute.post("/add",authMiddleware, addMeeting);
 MeetingRoute.get('/all', authMiddleware, getAllMeeting);
+MeetingRoute.get('/update/:id', authMiddleware, updateMeeting);
 MeetingRoute.get('/mymeetings', authMiddleware, getMyMeetings);
 MeetingRoute.get('/mymeetings/starred', authMiddleware, getMyStarredMeetings);
 // console.log("Meeting route loaded");

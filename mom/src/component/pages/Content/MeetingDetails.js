@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loading from "../Layout/Loading";
+import { useNotice } from "../../../NoticeContext";
 
 const MeetingDetails = () => {
     const user = JSON.parse(localStorage.getItem("user")) || {};
@@ -11,12 +12,38 @@ const MeetingDetails = () => {
     const [dateObj, setDateObj] = useState(null);
     const [updating, setUpdating] = useState(false);
     const [isStarred, setIsStarred] = useState(false); // Track star status locally
+    const { triggerNotice, triggerConfirm } = useNotice();
+
+    const deleteMeeting = async () => {
+        // 1. Call the confirmation popup
+        triggerConfirm(
+            "Do you want to delete this meeting record?",
+            async () => {
+                // 2. This code runs ONLY if the user clicks "Delete" in the modal
+                setUpdating(true);
+                try {
+                    await axios.delete(
+                        `/meeting/delete/${id}`,
+                        {
+                            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                        },
+                    );
+                    navigate("/dashboard");
+                    triggerNotice("Successfuly deleted meeting", "success");
+                } catch (err) {
+                    triggerNotice("Failed to delete meeting", "error");
+                } finally {
+                    setUpdating(false);
+                }
+            }, "danger"
+        );
+    };
 
     useEffect(() => {
         axios
             .get(`/meeting/details/${id}`, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                },
+                headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            },
             )
             .then((res) => {
                 setMeeting(res.data.meeting);
@@ -76,23 +103,6 @@ const MeetingDetails = () => {
                 },
             );
             setMeeting({ ...meeting, status: "Done" });
-        } catch (err) {
-            console.error("Error updating status:", err);
-        } finally {
-            setUpdating(false);
-        }
-    };
-
-    const deleteMeeting = async () => {
-        setUpdating(true);
-        try {
-            await axios.delete(
-                `/meeting/delete/${id}`,
-                {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-                },
-            );
-            navigate("/dashboard");
         } catch (err) {
             console.error("Error updating status:", err);
         } finally {

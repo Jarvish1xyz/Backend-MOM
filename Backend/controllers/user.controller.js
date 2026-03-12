@@ -32,7 +32,7 @@ exports.getUserProfile = async (req, res) => {
 // 🔹 UPDATE MY PROFILE
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, username, phone, role } = req.body;
+    const { name, username, phone, role, department } = req.body;
     // console.log(req.body);
     // console.log(req.file);
 
@@ -41,7 +41,8 @@ exports.updateProfile = async (req, res) => {
       name,
       username,
       phone,
-      role
+      role,
+      department
     };
 
     // 🔹 If profile image uploaded
@@ -70,14 +71,18 @@ exports.updateProfile = async (req, res) => {
 
 exports.updateUserProfile = async (req, res) => {
   try {
-    const { phone, role } = req.body;
+    const { name, username, phone, email, role, department } = req.body;
     // console.log(req.body);
     // console.log(req.file);
 
 
     const updateData = {
+      name,
+      username,
       phone,
-      role
+      email,
+      role,
+      department
     };
 
     // 🔹 If profile image uploaded

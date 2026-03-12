@@ -168,6 +168,34 @@ exports.getMeetingDetail = async (req, res) => {
   }
 };
 
+exports.updateMeeting = async (req, res) => {
+
+  try {
+    const user = await User.findById(req.user.id).populate(
+      "starredMeetings",
+      "meetingid",
+    );
+    if (!user) return res.status(404).json({ err: "User not found" });
+
+    const meeting = await Meeting.findOne({ meetingid: req.params.id })
+      .populate("calledBy", "email username")
+      .populate("members", "email username starredMeetings");
+
+    if (!meeting) {
+      return res.status(404).json({ err: "Meeting not found" });
+    }
+
+    const starredList = user.starredMeetings || [];
+    // console.log(starredList);
+    const isStarred = starredList.some((m) => (m.meetingid) === Number(req.params.id));
+    // console.log(isStarred, req.params.id);
+
+    res.json({ meeting, starforUser: isStarred });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+};
+
 exports.updateStatus = async (req, res) => {
   try {
     const meeting = await Meeting.findOneAndUpdate(
@@ -226,3 +254,4 @@ exports.deleteMeeting = async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 };
+

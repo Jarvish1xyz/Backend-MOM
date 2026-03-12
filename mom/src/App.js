@@ -5,12 +5,13 @@ import { useEffect, useState } from "react";
 import Layout from "./component/pages/Layout/Layout";
 import Home from "./component/pages/Content/Home";
 import AuthPage from "./component/pages/Auth/AuthPage";
-import CreateMOM from "./component/pages/CreateMOM/CreateMOM";
+import CreateMOM from "./component/pages/Meeting/CreateMeeting";
 import Profile from "./component/pages/Content/Profile";
 import MeetingDetails from "./component/pages/Content/MeetingDetails";
 import StarredMeetings from "./component/pages/Content/StarredMeetings";
 import AdminPanel from "./component/pages/Content/AdminPanel";
 import AdminProfile from "./component/pages/Content/AdminProfile";
+import { NoticeProvider } from "./NoticeContext";
 
 function App() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -64,35 +65,37 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* 🔐 AUTH ROUTE */}
-        {!isLogin ? (
-          <Route
-            path="/auth"
-            element={<AuthPage onClickCheck={handleAuthChange} />}
-          />
-        ) : (
-          /* 🏠 PROTECTED ROUTES */
-          <Route path="/" element={<Layout onLogout={handleAuthChange} />}>
+    <NoticeProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* 🔐 AUTH ROUTE */}
+          {!isLogin ? (
             <Route
-              index
-              element={user.role === "Admin" ? <AdminPanel /> : <Home />}
+              path="/auth"
+              element={<AuthPage onClickCheck={handleAuthChange} />}
             />
-            <Route path="create-meeting" element={<CreateMOM />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="starred" element={<StarredMeetings />} />
-            <Route path="meeting/:id" element={<MeetingDetails />} />
-            <Route path="userprofile/:id" element={<AdminProfile />} />
-          </Route>
-        )}
+          ) : (
+            /* 🏠 PROTECTED ROUTES */
+            <Route path="/" element={<Layout onLogout={handleAuthChange} />}>
+              <Route
+                index
+                element={user.role === "Admin" ? <AdminPanel /> : <Home />}
+              />
+              <Route path="create-meeting" element={<CreateMOM />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="starred" element={<StarredMeetings />} />
+              <Route path="meeting/:id" element={<MeetingDetails />} />
+              <Route path="userprofile/:id" element={<AdminProfile />} />
+            </Route>
+          )}
 
-        <Route
-          path="*"
-          element={<Navigate to={isLogin ? "/" : "/auth"} replace />}
-        />
-      </Routes>
-    </BrowserRouter>
+          <Route
+            path="*"
+            element={<Navigate to={isLogin ? "/" : "/auth"} replace />}
+          />
+        </Routes>
+      </BrowserRouter>
+    </NoticeProvider>
   );
 }
 

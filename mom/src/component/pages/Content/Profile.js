@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import Loading from "../Layout/Loading";
 import { useNavigate } from "react-router-dom";
+import { useNotice } from "../../../NoticeContext";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -10,6 +11,8 @@ const Profile = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null); // Reference to the hidden input
   const navigate = useNavigate();
+  const { triggerNotice, triggerConfirm } = useNotice();
+
 
   useEffect(() => {
     try {
@@ -40,40 +43,53 @@ const Profile = () => {
     }
   };
 
-  const saveProfile = async () => {
-    try {
-      // Use FormData to support file upload
-      const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("username", form.username);
-      formData.append("phone", form.phone);
-      formData.append("role", form.role);
+  const saveProfile = async (e) => {
+    if (e) e.preventDefault()
+    triggerConfirm(
+      "Doy you want to update the information?",
+      async () => {
+        try {
+          // Use FormData to support file upload
+          const formData = new FormData();
+          formData.append("name", form.name);
+          formData.append("username", form.username);
+          formData.append("phone", form.phone);
+          formData.append("role", form.role);
 
-      if (selectedFile) {
-        formData.append("profileImg", selectedFile);
-      }
+          if (selectedFile) {
+            formData.append("profileImg", selectedFile);
+          }
 
-      const res = await axios.put("/user/profile/update", formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+          const res = await axios.put("/user/profile/update", formData, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "multipart/form-data",
+            },
+          });
 
-      localStorage.removeItem("user");
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      setUser(res.data.user);
-      setEdit(false);
-      setSelectedFile(null);
-    } catch (err) {
-      console.log(err.response?.data);
+          localStorage.removeItem("user");
+          localStorage.setItem("user", JSON.stringify(res.data.user));
+          setUser(res.data.user);
+          setEdit(false);
+          setSelectedFile(null);
+          triggerNotice("Successfuly Data Updated", "success");
+        } catch (err) {
+          triggerNotice("Failed to Update Data!!!", "error");
+        }
+      }, "primary"
+    )
+  };
+
+  const handleKeyDown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      saveProfile();
     }
   };
 
   if (!user) return <Loading />;
 
   return (
-    <div className="max-w-4xl mx-auto animate-in fade-in duration-500">
+    <div onKeyDown={handleKeyDown} className="max-w-4xl mx-auto animate-in fade-in duration-500">
       <div className="mb-8 flex justify-between items-end">
         <button
           onClick={() => navigate(-1)}
@@ -216,6 +232,7 @@ const Profile = () => {
                   disabled={!edit}
                 />
                 <Field label="Email Address" value={user.email} disabled />
+                <Field label="Department" value={user.department || "New Added"} disabled />
               </div>
 
               <div className="space-y-6 pt-4 border-t border-slate-50">
@@ -257,10 +274,9 @@ const Field = ({ label, disabled, ...props }) => (
       {...props}
       disabled={disabled}
       className={`w-full px-5 py-3 rounded-2xl border transition-all text-sm font-semibold
-        ${
-          disabled
-            ? "bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed"
-            : "bg-white border-slate-200 text-slate-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 outline-none hover:border-slate-300 shadow-sm"
+        ${disabled
+          ? "bg-slate-50 border-slate-100 text-slate-400 cursor-not-allowed"
+          : "bg-white border-slate-200 text-slate-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 outline-none hover:border-slate-300 shadow-sm"
         }`}
     />
   </div>

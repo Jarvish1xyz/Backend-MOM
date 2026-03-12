@@ -49,8 +49,8 @@ function CreateMOM() {
   const getFilteredUsers = (query) => {
     if (!query) return [];
     return allUsers.filter(u =>
-      u.email.toLowerCase().includes(query.toLowerCase()) ||
-      u.username.toLowerCase().includes(query.toLowerCase())
+      (u.email.toLowerCase().includes(query.toLowerCase()) && (u.department===user.department)) ||
+      (u.username.toLowerCase().includes(query.toLowerCase()) && (u.department===user.department))
     ).slice(0, 5); // Limit results for clean UI
   };
 
@@ -103,7 +103,8 @@ function CreateMOM() {
     }
   };
 
-  const save = async () => {
+  const save = async (e) => {
+    if (e) e.preventDefault();
     try {
       if (user.role !== "HR" && user.role !== "Admin") {
         alert("Only HR/Admin can create meetings");
@@ -130,8 +131,15 @@ function CreateMOM() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+      save();
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20 px-4 md:px-0">
+
+    <div onKeyDown={handleKeyDown} className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20 px-4 md:px-0">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>

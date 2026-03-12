@@ -45,7 +45,7 @@ function Home() {
           <p className="text-slate-500 font-medium mt-1">
             Welcome back,{" "}
             <span className="text-blue-600 font-bold">
-              {user.email || "User"}
+              {user.name || "User"}
             </span>
           </p>
         </div>
@@ -76,7 +76,7 @@ function Home() {
             lightBg: "bg-blue-50",
           },
           {
-            label: "Pending Tasks",
+            label: "Pending Meetings",
             value: pendingCount, // Dynamic Pending Count
             icon: (
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
