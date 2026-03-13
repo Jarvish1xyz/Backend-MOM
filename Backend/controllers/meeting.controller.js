@@ -169,30 +169,73 @@ exports.getMeetingDetail = async (req, res) => {
 };
 
 exports.updateMeeting = async (req, res) => {
-
   try {
-    const user = await User.findById(req.user.id).populate(
-      "starredMeetings",
-      "meetingid",
-    );
-    if (!user) return res.status(404).json({ err: "User not found" });
 
-    const meeting = await Meeting.findOne({ meetingid: req.params.id })
-      .populate("calledBy", "email username")
-      .populate("members", "email username starredMeetings");
+    const { title, date, time, agenda, note, membersEmail } = req.body;
+
+    const meeting = await Meeting.findOne({ meetingid: req.params.id });
 
     if (!meeting) {
-      return res.status(404).json({ err: "Meeting not found" });
+      return res.status(404).json({ msg: "Meeting not found" });
     }
 
-    const starredList = user.starredMeetings || [];
-    // console.log(starredList);
-    const isStarred = starredList.some((m) => (m.meetingid) === Number(req.params.id));
-    // console.log(isStarred, req.params.id);
+    const calledByUser = await User.findById(meeting.calledBy);
 
-    res.json({ meeting, starforUser: isStarred });
+    const members = await User.find({
+      email: { $in: membersEmail }
+    }).select("_id");
+
+    const meetingDate = new Date(`${date}T${time}:00+05:30`);
+
+    if (meeting.eventId && calledByUser.googleRefreshToken) {
+
+      oauth2Client.setCredentials({
+        refresh_token: calledByUser.googleRefreshToken
+      });
+
+      const calendar = google.calendar({
+        version: "v3",
+        auth: oauth2Client
+      });
+
+      const startDateTime = new Date(`${date}T${time}:00+05:30`);
+      const endDateTime = new Date(startDateTime.getTime() + 60 * 60000);
+
+      await calendar.events.update({
+        calendarId: "primary",
+        eventId: meeting.eventId,
+        resource: {
+          summary: title,
+          description: agenda,
+          start: {
+            dateTime: startDateTime,
+            timeZone: "Asia/Kolkata"
+          },
+          end: {
+            dateTime: endDateTime,
+            timeZone: "Asia/Kolkata"
+          }
+        }
+      });
+
+    }
+
+    meeting.title = title;
+    meeting.Date = meetingDate;
+    meeting.agenda = agenda;
+    meeting.note = note;
+    meeting.members = members.map(m => m._id);
+
+    await meeting.save();
+
+    res.json({
+      msg: "Meeting updated successfully",
+      meeting
+    });
+
   } catch (err) {
-    res.status(500).json({ err: err.message });
+    console.error(err);
+    res.status(500).json({ err: "Server error" });
   }
 };
 

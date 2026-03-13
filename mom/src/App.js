@@ -6,6 +6,7 @@ import Layout from "./component/pages/Layout/Layout";
 import Home from "./component/pages/Content/Home";
 import AuthPage from "./component/pages/Auth/AuthPage";
 import CreateMOM from "./component/pages/Meeting/CreateMeeting";
+import UpdateMeeting from "./component/pages/Meeting/UpdateMeeting";
 import Profile from "./component/pages/Content/Profile";
 import MeetingDetails from "./component/pages/Content/MeetingDetails";
 import StarredMeetings from "./component/pages/Content/StarredMeetings";
@@ -86,6 +87,7 @@ function App() {
               <Route path="starred" element={<StarredMeetings />} />
               <Route path="meeting/:id" element={<MeetingDetails />} />
               <Route path="userprofile/:id" element={<AdminProfile />} />
+              <Route path="update-meeting/:id" element={<UpdateMeeting/>} />
             </Route>
           )}
 
