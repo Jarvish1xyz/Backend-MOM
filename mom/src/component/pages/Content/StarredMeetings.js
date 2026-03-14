@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "../Layout/Loading";
+import API from "../../../api";
 
 function StarredMeetings() {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ function StarredMeetings() {
   useEffect(() => {
     // We assume your backend has an endpoint for starred items
     // or you can filter them from all meetings
-    axios
+    API
       .get("/meeting/mymeetings/starred", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
