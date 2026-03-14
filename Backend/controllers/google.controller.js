@@ -56,8 +56,9 @@ exports.authGoogleCallback = async (req, res) => {
     if (!user) {
       return res.status(404).send("User not found");
     }
+    const urlToFrontend = process.env.FRONTEND_URL;
 
-    res.redirect("https://probable-meme-g474x6r4v95v2wxjv-3000.app.github.dev/create-meeting?google=success");
+    res.redirect(`${urlToFrontend}/auth/create-meeting?google=success`);
 
   } catch (error) {
     console.error(error);
