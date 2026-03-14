@@ -16,8 +16,12 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(express.json());
 app.use(cors({
-    origin: process.env.FRONTEND_URL, // We will set this in deployment
-    credentials: true
+  // Add your NEW Vercel URL here
+  origin: [
+    'https://backend-mom.vercel.app/', 
+    'http://localhost:3000' // Keep this for local testing
+  ],
+  credentials: true
 }));
 
 
