@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useNotice } from "../../../NoticeContext";
+import API from "../../../api";
 
 function UpdateMeeting() {
     const { id } = useParams();
@@ -27,10 +28,10 @@ function UpdateMeeting() {
             try {
                 const headers = { Authorization: `Bearer ${localStorage.getItem("token")}` };
 
-                const userRes = await axios.get("/user/all", { headers });
+                const userRes = await API.get("/user/all", { headers });
                 setAllUsers(userRes.data);
 
-                const meetingRes = await axios.get(`/meeting/details/${id}`, { headers });
+                const meetingRes = await API.get(`/meeting/details/${id}`, { headers });
                 const meeting = meetingRes.data.meeting;
 
                 // 1. Format the date for the HTML input (YYYY-MM-DD)
@@ -113,7 +114,7 @@ function UpdateMeeting() {
                     console.log(participants, cleanParticipants);
                     const allMembers = Array.from(new Set([...cleanParticipants, user.email]));
 
-                    await axios.patch(`/meeting/update/${id}`, {
+                    await API.patch(`/meeting/update/${id}`, {
                         ...formData,
                         calledBy: user.email,
                         membersEmail: allMembers,

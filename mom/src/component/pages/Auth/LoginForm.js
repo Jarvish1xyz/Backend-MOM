@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from 'axios';
 import { useNotice } from "../../../NoticeContext";
+import API from "../../../api";
 
 function LoginForm({ onClickCheck, isVisible }) {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -10,7 +11,7 @@ function LoginForm({ onClickCheck, isVisible }) {
 
   const login = async () => {
     try {
-      const res = await axios.post("/auth/login", form);
+      const res = await API.post("/auth/login", form);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       triggerNotice("Successfuly Login!!!", "success");

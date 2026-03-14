@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Loading from "../Layout/Loading";
 import { useNotice } from "../../../NoticeContext";
+import API from "../../../api";
 
 const MeetingDetails = () => {
     const user = JSON.parse(localStorage.getItem("user")) || {};
@@ -22,7 +23,7 @@ const MeetingDetails = () => {
                 // 2. This code runs ONLY if the user clicks "Delete" in the modal
                 setUpdating(true);
                 try {
-                    await axios.delete(
+                    await API.delete(
                         `/meeting/delete/${id}`,
                         {
                             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -40,7 +41,7 @@ const MeetingDetails = () => {
     };
 
     useEffect(() => {
-        axios
+        API
             .get(`/meeting/details/${id}`, {
                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             },
@@ -60,7 +61,7 @@ const MeetingDetails = () => {
 
         try {
             if (!previousState) {
-                await axios.patch(
+                await API.patch(
                     `/user/meeting/starred/`,
                     {
                         email: user.email,
@@ -73,7 +74,7 @@ const MeetingDetails = () => {
                     },
                 );
             } else {
-                await axios.put(
+                await API.put(
                     `/user/meeting/starred/`,
                     {
                         email: user.email,
@@ -95,7 +96,7 @@ const MeetingDetails = () => {
     // const markAsCompleted = async () => {
     //     setUpdating(true);
     //     try {
-    //         await axios.put(
+    //         await API.put(
     //             `/meeting/update-status/${id}`,
     //             { status: "Done" },
     //             {

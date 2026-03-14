@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API from "../../../api";
 
 function CreateMOM() {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -20,7 +21,7 @@ function CreateMOM() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("/user/all", {
+        const res = await API.get("/user/all", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setAllUsers(res.data);
@@ -92,7 +93,7 @@ function CreateMOM() {
   const updateUserLinks = async (meetingId, allMembers) => {
     try {
       const promises = allMembers.map(memberEmail =>
-        axios.patch(`/user/meeting/update/`, {
+        API.patch(`/user/meeting/update/`, {
           email: memberEmail,
           meetingid: meetingId
         }, {
@@ -117,7 +118,7 @@ function CreateMOM() {
       const allMembers = Array.from(new Set([...cleanParticipants, user.email]));
 
       // console.log(formData);
-      await axios.post("/meeting/add", {
+      await API.post("/meeting/add", {
         ...formData,
         calledByEmail: user.email,
         membersEmail: allMembers,

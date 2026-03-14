@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import API from "../../../api";
 
 function RegisterForm({ onClickCheck, isVisible, onToggle }) {
     const [form, setForm] = useState({
@@ -15,7 +16,7 @@ function RegisterForm({ onClickCheck, isVisible, onToggle }) {
 
     const register = async () => {
         try {
-            await axios.post("/auth/register", form);
+            await API.post("/auth/register", form);
             onClickCheck()
             onToggle()
         } catch (err) {

@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "../Layout/Loading";
+import API from "../../../api";
 
 function Home() {
   const user = JSON.parse(localStorage.getItem("user")) || {};
@@ -10,7 +11,7 @@ function Home() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
+    API
       .get("/meeting/mymeetings", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })

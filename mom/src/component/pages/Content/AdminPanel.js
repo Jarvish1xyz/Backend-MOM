@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "../Layout/Loading";
 import { useNavigate } from "react-router-dom";
+import API from "../../../api";
 
 const AdminPanel = () => {
   const [view, setView] = useState("HR"); // Default view
@@ -11,7 +12,7 @@ const AdminPanel = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios
+    API
       .get("/admin/all-users", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })

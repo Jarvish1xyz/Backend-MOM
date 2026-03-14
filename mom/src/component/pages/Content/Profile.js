@@ -3,6 +3,7 @@ import axios from "axios";
 import Loading from "../Layout/Loading";
 import { useNavigate } from "react-router-dom";
 import { useNotice } from "../../../NoticeContext";
+import API from "../../../api";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -16,7 +17,7 @@ const Profile = () => {
 
   useEffect(() => {
     try {
-      axios
+      API
         .get("/user/profile", {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
@@ -60,7 +61,7 @@ const Profile = () => {
             formData.append("profileImg", selectedFile);
           }
 
-          const res = await axios.put("/user/profile/update", formData, {
+          const res = await API.put("/user/profile/update", formData, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
               "Content-Type": "multipart/form-data",
