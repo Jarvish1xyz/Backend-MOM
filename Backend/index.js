@@ -16,9 +16,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use(express.json());
 app.use(cors({
-    // Replace with your ACTUAL Vercel URL (no trailing slash)
-    origin: ["https://your-app-name.vercel.app", "http://localhost:3000"], 
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    origin: true, 
     credentials: true
 }));
 
