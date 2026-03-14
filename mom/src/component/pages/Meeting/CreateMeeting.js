@@ -50,8 +50,8 @@ function CreateMOM() {
   const getFilteredUsers = (query) => {
     if (!query) return [];
     return allUsers.filter(u =>
-      (u.email.toLowerCase().includes(query.toLowerCase()) && (u.department===user.department)) ||
-      (u.username.toLowerCase().includes(query.toLowerCase()) && (u.department===user.department))
+      (u.email.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department)) ||
+      (u.username.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department))
       // (u.email.toLowerCase().includes(query.toLowerCase())) ||
       // (u.username.toLowerCase().includes(query.toLowerCase()))
     ).slice(0, 5); // Limit results for clean UI
@@ -86,8 +86,10 @@ function CreateMOM() {
       JSON.stringify(participants)
     );
     const token = localStorage.getItem("token");
+    const backendBaseUrl = process.env.REACT_APP_API_URL;
 
-    window.location.href = `https://probable-meme-g474x6r4v95v2wxjv-5000.app.github.dev/auth/google?token=${token}`;
+    // Dynamically point to your Render backend
+    window.location.href = `${backendBaseUrl}/auth/google?token=${token}`;
   };
 
   const updateUserLinks = async (meetingId, allMembers) => {
@@ -162,7 +164,7 @@ function CreateMOM() {
               className="w-5 h-5"
             />
             {localStorage.getItem("isGoogle") === "true" ? "Save to confirm" : "Schedule with Google Meet"}
-            
+
           </button>
         )}
       </div>
