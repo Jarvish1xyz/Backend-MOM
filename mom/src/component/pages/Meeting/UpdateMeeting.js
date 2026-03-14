@@ -74,10 +74,10 @@ function UpdateMeeting() {
     const getFilteredUsers = (query) => {
         if (!query) return [];
         return allUsers.filter(u =>
-            // (u.email.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department)) ||
-            // (u.username.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department))
-            (u.email.toLowerCase().includes(query.toLowerCase())) ||
-            (u.username.toLowerCase().includes(query.toLowerCase()))
+            (u.email.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department)) ||
+            (u.username.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department))
+            // (u.email.toLowerCase().includes(query.toLowerCase())) ||
+            // (u.username.toLowerCase().includes(query.toLowerCase()))
         ).slice(0, 5);
     };
 
