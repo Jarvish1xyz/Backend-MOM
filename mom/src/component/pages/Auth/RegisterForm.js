@@ -25,7 +25,7 @@ function RegisterForm({ onClickCheck, isVisible, onToggle }) {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google/login`;
+    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google/register`;
   };
 
   return (

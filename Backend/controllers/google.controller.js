@@ -1,83 +1,96 @@
 const oauth2Client = require("../utils/googleAuth");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
-
-// google.controller.js (Add this at the bottom)
 const { google } = require('googleapis');
 
+// google.controller.js
+
+// 🔐 GOOGLE LOGIN CALLBACK
 exports.googleLoginCallback = async (req, res) => {
   try {
     const { code } = req.query;
     const { tokens } = await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens);
-
-    // 1. Get user info from Google
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
     const { data } = await oauth2.userinfo.get();
 
-    // 2. Look for user by email
-    let user = await User.findOne({ email: data.email });
+    // LOOKUP: Only find existing user
+    const user = await User.findOne({ email: data.email });
 
     if (!user) {
-      // REGISTER: If user doesn't exist, create them
-      // We use your existing generateUserId function logic here
-      const newUserId = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-      
-      user = new User({
-        name: data.name,
-        username: data.email.split('@')[0], // Create a username from email
-        userid: newUserId,
-        email: data.email,
-        password: await bcrypt.hash(Math.random().toString(36), 10), // Random password
-        googleConnected: true,
-        role: "Employee" // Default role
-      });
+      // If user doesn't exist, stop them!
+      return res.redirect(`${process.env.FRONTEND_URL}/auth?error=user_not_found`);
     }
 
-    // 3. Always update the refresh token if Google sends it
+    // Success: Update token and redirect
     user.googleConnected = true;
-    if (tokens.refresh_token) {
-      user.googleRefreshToken = tokens.refresh_token;
-    }
+    if (tokens.refresh_token) user.googleRefreshToken = tokens.refresh_token;
     await user.save();
 
-    // 4. Create your App JWT (Same logic as your auth.controller.js)
-    const token = jwt.sign(
-      { id: user._id, role: user.role, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-
-    // 5. Redirect to Frontend with Token and User Data
-    const userData = JSON.stringify({
-      id: user._id,
-      userid: user.userid,
-      email: user.email,
-      role: user.role,
-      name: user.name
-    });
-
-    // Send them to the new success page we will add in App.js
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    const userData = JSON.stringify({ id: user._id, name: user.name, email: user.email });
+    
     res.redirect(`${process.env.FRONTEND_URL}/login-success?token=${token}&user=${encodeURIComponent(userData)}`);
-
   } catch (error) {
-    console.error(error);
-    res.redirect(`${process.env.FRONTEND_URL}/auth?error=google_failed`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth?error=login_failed`);
   }
 };
 
+// 📝 GOOGLE REGISTER CALLBACK
+exports.googleRegisterCallback = async (req, res) => {
+  try {
+    const { code } = req.query;
+    const { tokens } = await oauth2Client.getToken(code);
+    const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
+    const { data } = await oauth2.userinfo.get();
+
+    const existingUser = await User.findOne({ email: data.email });
+    if (existingUser) {
+      // If user exists, tell them to login instead
+      return res.redirect(`${process.env.FRONTEND_URL}/auth?error=user_exists`);
+    }
+
+    // CREATE: Build the new user using your specific model fields
+    const newUser = new User({
+      name: data.name,
+      username: data.email.split('@')[0] + Math.floor(Math.random() * 100),
+      userid: Math.floor(1000000000 + Math.random() * 9000000000).toString(),
+      email: data.email,
+      password: await bcrypt.hash(Math.random().toString(36), 10),
+      role: "Employee",
+      googleConnected: true,
+      googleRefreshToken: tokens.refresh_token
+    });
+
+    await newUser.save();
+
+    const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    const userData = JSON.stringify({ id: newUser._id, name: newUser.name, email: newUser.email });
+
+    res.redirect(`${process.env.FRONTEND_URL}/login-success?token=${token}&user=${encodeURIComponent(userData)}`);
+  } catch (error) {
+    res.redirect(`${process.env.FRONTEND_URL}/auth?error=registration_failed`);
+  }
+};
+
+// Function for Login Button
 exports.googleLoginTrigger = (req, res) => {
-  // This creates the URL for the "Login with Google" button
   const url = oauth2Client.generateAuthUrl({
     access_type: "offline",
-    prompt: "consent select_account", 
-    scope: [
-      "https://www.googleapis.com/auth/userinfo.profile",
-      "https://www.googleapis.com/auth/userinfo.email",
-      "https://www.googleapis.com/auth/calendar" // Keeps your Meet feature active
-    ],
+    prompt: "select_account",
+    redirect_uri: process.env.GOOGLE_LOGIN_REDIRECT_URI, // Points to login callback
+    scope: ["profile", "email", "https://www.googleapis.com/auth/calendar"]
   });
+  res.redirect(url);
+};
 
+// Function for Register Button
+exports.googleRegisterTrigger = (req, res) => {
+  const url = oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    prompt: "consent",
+    redirect_uri: process.env.GOOGLE_REGISTER_REDIRECT_URI, // Points to register callback
+    scope: ["profile", "email", "https://www.googleapis.com/auth/calendar"]
+  });
   res.redirect(url);
 };
 
