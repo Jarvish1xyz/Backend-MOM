@@ -41,7 +41,14 @@ exports.googleRegisterCallback = async (req, res) => {
   console.log("1. Callback hit by Google"); // Check if Google even reaches your backend
   try {
     const { code } = req.query;
-    const { tokens } = await oauth2Client.getToken(code);
+
+    // FIX: You MUST pass the same redirect_uri used in the 'trigger' step
+    const { tokens } = await oauth2Client.getToken({
+      code: code,
+      redirect_uri: process.env.GOOGLE_REGISTER_REDIRECT_URI 
+    });
+    
+    console.log("1.5 Tokens received successfully");
     oauth2Client.setCredentials(tokens);
 
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
