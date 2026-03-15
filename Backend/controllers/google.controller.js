@@ -208,6 +208,8 @@ exports.authGoogle = (req, res) => {
 exports.authGoogleCallback = async (req, res) => {
   try {
     const { code, state } = req.query;
+    console.log(code)
+    console.log(state)
 
     if (!code || !state) {
       return res.status(400).send("Missing code or state");
