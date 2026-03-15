@@ -6,7 +6,6 @@ const auth = require("./routes/auth.route")
 const user = require('./routes/user.route')
 const Meeting = require('./routes/meeting.route')
 const AdminRoute = require('./routes/admin.route');
-const Google = require('./routes/google.route');
 const app = express();
 const port = process.env.PORT;
 const url = process.env.MONGOURL;
@@ -32,7 +31,6 @@ app.use('/user', user);
 console.log("User route loaded");
 app.use('/meeting', Meeting);
 app.use('/admin', AdminRoute);
-app.use('/', Google)
 
 app.listen(port, '0.0.0.0', () => {
     console.log("server started @ 5000");

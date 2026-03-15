@@ -190,8 +190,7 @@ exports.authGoogle = (req, res) => {
     const url = oauth2Client.generateAuthUrl({
       access_type: "offline",
       prompt: "consent",
-      // ADD THIS LINE:
-      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI, 
+      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI, // <--- Use the meeting URI
       scope: ["https://www.googleapis.com/auth/calendar"],
       state: userEmail,
     });
@@ -213,7 +212,7 @@ exports.authGoogleCallback = async (req, res) => {
     // FIX: Pass the object with redirect_uri
     const { tokens } = await oauth2Client.getToken({
       code: code,
-      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI
+      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI // <--- Must match exactly
     });
 
     if (!tokens.refresh_token) {
@@ -224,7 +223,7 @@ exports.authGoogleCallback = async (req, res) => {
 
     const userEmail = state;
     const updateData = { googleConnected: true };
-    
+
     if (tokens.refresh_token) {
       updateData.googleRefreshToken = tokens.refresh_token;
     }
