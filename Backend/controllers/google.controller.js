@@ -23,19 +23,22 @@ exports.googleLoginCallback = async (req, res) => {
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
     const { data } = await oauth2.userinfo.get();
     console.log("2. Login data received for:", data.email);
-
+    
     if (!user) {
       // If user doesn't exist, stop them!
       return res.redirect(`${process.env.FRONTEND_URL}/auth?error=user_not_found`);
     }
-
+    console.log("3. User is in database", );
+    
     // Success: Update token and redirect
     user.googleConnected = true;
     if (tokens.refresh_token) user.googleRefreshToken = tokens.refresh_token;
     await user.save();
-
+    console.log("4. User token saved in db", );
+    
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
     const userData = JSON.stringify({ id: user._id, name: user.name, email: user.email });
+    console.log("4. User token saved in db", );
     
     res.redirect(`${process.env.FRONTEND_URL}/login-success?token=${token}&user=${encodeURIComponent(userData)}`);
   } catch (error) {
@@ -142,9 +145,15 @@ exports.googleLoginTrigger = (req, res) => {
   const url = oauth2Client.generateAuthUrl({
     access_type: "offline",
     prompt: "select_account",
-    redirect_uri: process.env.GOOGLE_LOGIN_REDIRECT_URI, // Points to login callback
-    scope: ["profile", "email", "https://www.googleapis.com/auth/calendar"]
+    // Must match the callback URI
+    redirect_uri: process.env.GOOGLE_LOGIN_REDIRECT_URI, 
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/calendar"
+    ],
   });
+
   res.redirect(url);
 };
 
