@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema(
     profileImg: String,
     meetings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Meeting" }],
     starredMeetings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Meeting" }],
+    googleId: { type: String, unique: true, sparse: true },
     googleRefreshToken: {type: String, default: null},
     googleConnected: {
       type: Boolean,

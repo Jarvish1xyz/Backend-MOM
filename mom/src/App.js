@@ -13,6 +13,7 @@ import StarredMeetings from "./component/pages/Content/StarredMeetings";
 import AdminPanel from "./component/pages/Content/AdminPanel";
 import AdminProfile from "./component/pages/Content/AdminProfile";
 import { NoticeProvider } from "./NoticeContext";
+import LoginSuccess from "./component/pages/Auth/LoginSuccess";
 
 function App() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -69,6 +70,7 @@ function App() {
     <NoticeProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/login-success" element={<LoginSuccess />} />
           {/* 🔐 AUTH ROUTE */}
           {!isLogin ? (
             <Route
@@ -87,7 +89,7 @@ function App() {
               <Route path="starred" element={<StarredMeetings />} />
               <Route path="meeting/:id" element={<MeetingDetails />} />
               <Route path="userprofile/:id" element={<AdminProfile />} />
-              <Route path="update-meeting/:id" element={<UpdateMeeting/>} />
+              <Route path="update-meeting/:id" element={<UpdateMeeting />} />
             </Route>
           )}
 

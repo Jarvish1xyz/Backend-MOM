@@ -37,14 +37,14 @@ function LoginForm({ onClickCheck, isVisible }) {
           <button type="submit" onClick={login} className="w-full cursor-pointer bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all active:scale-95">
             LOG IN
           </button>
+          <button
+            onClick={handleGoogleLogin}
+            className="w-full m-2 cursor-pointer flex items-center justify-center gap-3 bg-white border border-slate-200 text-slate-700 py-4 rounded-2xl font-bold hover:bg-slate-50 transition-all active:scale-95"
+          >
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5" alt="Google" />
+            Continue with Google
+          </button>
         </form>
-        <button
-          onClick={handleGoogleLogin}
-          className="google-login-button"
-          style={{ backgroundColor: '#4285F4', color: 'white', padding: '10px', borderRadius: '5px' }}
-        >
-          Continue with Google
-        </button>
       </div>
     </div>
   );
