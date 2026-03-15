@@ -6,7 +6,7 @@ exports.googleLoginTrigger = (req, res) => {
   // This creates the URL for the "Login with Google" button
   const url = oauth2Client.generateAuthUrl({
     access_type: "offline",
-    prompt: "consent", 
+    prompt: "consent select_account", 
     scope: [
       "https://www.googleapis.com/auth/userinfo.profile",
       "https://www.googleapis.com/auth/userinfo.email",
