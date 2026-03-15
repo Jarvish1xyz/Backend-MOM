@@ -73,7 +73,7 @@ exports.authGoogleCallback = async (req, res) => {
     }
     const urlToFrontend = process.env.FRONTEND_URL;
 
-    res.redirect(`${urlToFrontend}/auth/create-meeting?google=success`);
+    res.redirect(`${urlToFrontend}/create-meeting?google=success`);
 
   } catch (error) {
     console.error(error);
