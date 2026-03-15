@@ -176,78 +176,68 @@ exports.googleRegisterTrigger = (req, res) => {
   res.redirect(url);
 };
 
+// google.controller.js
+const { google } = require('googleapis');
+
 exports.authGoogle = (req, res) => {
   const token = req.query.token;
-
   if (!token) return res.status(401).json({ message: "No token provided" });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userEmail = decoded.email;
+    
+    // 1. CREATE A FRESH CLIENT JUST FOR THIS REQUEST
+    const client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.GOOGLE_MEETING_REDIRECT_URI // Lock it in here
+    );
 
-    // FORCE the redirect URI into the client directly
-    oauth2Client.redirectUri = process.env.GOOGLE_MEETING_REDIRECT_URI;
-
-    const url = oauth2Client.generateAuthUrl({
+    const url = client.generateAuthUrl({
       access_type: "offline",
       prompt: "consent",
-      // Pass it again here for good measure
-      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI, 
       scope: ["https://www.googleapis.com/auth/calendar"],
-      state: userEmail, 
+      state: decoded.email, // This is our 'state'
     });
 
-    console.log("Redirecting to Google with URI:", process.env.GOOGLE_MEETING_REDIRECT_URI);
     res.redirect(url);
-
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
 };
+
 
 exports.authGoogleCallback = async (req, res) => {
   try {
     const { code, state } = req.query;
     console.log(code)
     console.log(state)
+    if (!code || !state) return res.status(400).send("Missing code or state");
 
-    if (!code || !state) {
-      return res.status(400).send("Missing code or state");
-    }
+    // 1. CREATE A FRESH CLIENT AGAIN
+    const client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      process.env.GOOGLE_MEETING_REDIRECT_URI
+    );
 
-    // FIX: Pass the object with redirect_uri
-    const { tokens } = await oauth2Client.getToken({
-      code: code,
-      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI // <--- Must match exactly
-    });
-
-    if (!tokens.refresh_token) {
-      // Note: If you already have a token and are just re-linking, 
-      // Google might not send a new refresh_token unless you force 'consent'
-      console.log("No new refresh token, using existing if available.");
-    }
-
-    const userEmail = state;
+    // 2. EXCHANGE CODE
+    const { tokens } = await client.getToken(code);
+    
     const updateData = { googleConnected: true };
-
     if (tokens.refresh_token) {
       updateData.googleRefreshToken = tokens.refresh_token;
     }
 
     const user = await User.findOneAndUpdate(
-      { email: userEmail },
+      { email: state },
       updateData,
       { new: true }
     );
 
-    if (!user) {
-      return res.status(404).send("User not found");
-    }
-
     res.redirect(`${process.env.FRONTEND_URL}/create-meeting?google=success`);
-
   } catch (error) {
-    console.error("Meeting Auth Error:", error.response?.data || error.message);
+    console.error("Meeting Callback Error:", error.message);
     res.status(500).send("Google connection failed");
   }
 };
