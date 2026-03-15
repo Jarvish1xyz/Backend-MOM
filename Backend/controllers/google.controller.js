@@ -14,7 +14,7 @@ exports.googleLoginCallback = async (req, res) => {
     // FIX: Tell the client to use the LOGIN redirect URI
     const { tokens } = await oauth2Client.getToken({
       code: code,
-      redirect_uri: process.env.GOOGLE_LOGIN_REDIRECT_URI 
+      redirect_uri: process.env.GOOGLE_LOGIN_REDIRECT_URI
     });
 
     console.log("1.5 Login Tokens received");
@@ -23,24 +23,31 @@ exports.googleLoginCallback = async (req, res) => {
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
     const { data } = await oauth2.userinfo.get();
     console.log("2. Login data received for:", data.email);
-    
-    const user = await User.findOne({email:data.email});
+
+    const user = await User.findOne({ email: data.email });
     if (!user) {
       // If user doesn't exist, stop them!
       return res.redirect(`${process.env.FRONTEND_URL}/auth?error=user_not_found`);
     }
-    console.log("3. User is in database", );
-    
+    console.log("3. User is in database",);
+
     // Success: Update token and redirect
     user.googleConnected = true;
     if (tokens.refresh_token) user.googleRefreshToken = tokens.refresh_token;
     await user.save();
-    console.log("4. User token saved in db", );
-    
+    console.log("4. User token saved in db",);
+
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    const userData = JSON.stringify({ id: user._id, name: user.name, email: user.email });
-    console.log("4. User token saved in db", );
-    
+    const userData = JSON.stringify({
+      id: user._id,
+      userid: user.userid,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+      department: user.department
+    });
+    console.log("4. User token saved in db",);
+
     res.redirect(`${process.env.FRONTEND_URL}/login-success?token=${token}&user=${encodeURIComponent(userData)}`);
   } catch (error) {
     res.redirect(`${process.env.FRONTEND_URL}/auth?error=login_failed`);
@@ -56,9 +63,9 @@ exports.googleRegisterCallback = async (req, res) => {
     // FIX: You MUST pass the same redirect_uri used in the 'trigger' step
     const { tokens } = await oauth2Client.getToken({
       code: code,
-      redirect_uri: process.env.GOOGLE_REGISTER_REDIRECT_URI 
+      redirect_uri: process.env.GOOGLE_REGISTER_REDIRECT_URI
     });
-    
+
     console.log("1.5 Tokens received successfully");
     oauth2Client.setCredentials(tokens);
 
@@ -77,7 +84,7 @@ exports.googleRegisterCallback = async (req, res) => {
       username: data.email.split('@')[0] + Math.floor(Math.random() * 100),
       userid: Math.floor(1000000000 + Math.random() * 9000000000).toString(),
       email: data.email,
-      password: await bcrypt.hash(Math.random().toString(36), 10),
+      password: await bcrypt.hash(data.name, 10),
       phone: "0000000000",
       role: "Employee",
       googleConnected: true,
@@ -88,10 +95,13 @@ exports.googleRegisterCallback = async (req, res) => {
     console.log("4. User saved to MongoDB successfully");
 
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    const userData = JSON.stringify({ 
-      id: newUser._id,
-      name: newUser.name,
-      email: newUser.email
+    const userData = JSON.stringify({
+      id: user._id,
+      userid: user.userid,
+      email: user.email,
+      role: user.role,
+      name: user.name,
+      department: user.department
     });
 
     res.redirect(`${process.env.FRONTEND_URL}/login-success?token=${token}&user=${encodeURIComponent(userData)}`);
@@ -104,7 +114,7 @@ exports.googleRegisterCallback = async (req, res) => {
 //     const { code } = req.query;
 //     const { tokens } = await oauth2Client.getToken(code);
 //     oauth2Client.setCredentials(tokens);
-    
+
 //     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
 //     const { data } = await oauth2.userinfo.get();
 
@@ -147,7 +157,7 @@ exports.googleLoginTrigger = (req, res) => {
     access_type: "offline",
     prompt: "select_account",
     // Must match the callback URI
-    redirect_uri: process.env.GOOGLE_LOGIN_REDIRECT_URI, 
+    redirect_uri: process.env.GOOGLE_LOGIN_REDIRECT_URI,
     scope: [
       "https://www.googleapis.com/auth/userinfo.profile",
       "https://www.googleapis.com/auth/userinfo.email",
