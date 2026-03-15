@@ -96,12 +96,9 @@ exports.googleRegisterCallback = async (req, res) => {
 
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
     const userData = JSON.stringify({
-      id: user._id,
-      userid: user.userid,
-      email: user.email,
-      role: user.role,
-      name: user.name,
-      department: user.department
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email
     });
 
     res.redirect(`${process.env.FRONTEND_URL}/login-success?token=${token}&user=${encodeURIComponent(userData)}`);
