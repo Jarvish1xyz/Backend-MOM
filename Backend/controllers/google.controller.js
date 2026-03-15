@@ -10,12 +10,19 @@ const { google } = require('googleapis');
 exports.googleLoginCallback = async (req, res) => {
   try {
     const { code } = req.query;
-    const { tokens } = await oauth2Client.getToken(code);
+
+    // FIX: Tell the client to use the LOGIN redirect URI
+    const { tokens } = await oauth2Client.getToken({
+      code: code,
+      redirect_uri: process.env.GOOGLE_LOGIN_REDIRECT_URI 
+    });
+
+    console.log("1.5 Login Tokens received");
+    oauth2Client.setCredentials(tokens);
+
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
     const { data } = await oauth2.userinfo.get();
-
-    // LOOKUP: Only find existing user
-    const user = await User.findOne({ email: data.email });
+    console.log("2. Login data received for:", data.email);
 
     if (!user) {
       // If user doesn't exist, stop them!
