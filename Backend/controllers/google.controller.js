@@ -178,6 +178,7 @@ exports.googleRegisterTrigger = (req, res) => {
 
 exports.authGoogle = (req, res) => {
   const token = req.query.token;
+  console.log("It reached hear!!!")
 
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
