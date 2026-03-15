@@ -81,7 +81,7 @@ exports.googleRegisterCallback = async (req, res) => {
 
     const newUser = new User({
       name: data.name,
-      username: data.email.split('@')[0] + Math.floor(Math.random() * 100),
+      username: data.email.split('@')[0],
       userid: Math.floor(1000000000 + Math.random() * 9000000000).toString(),
       email: data.email,
       password: await bcrypt.hash(data.name, 10),
