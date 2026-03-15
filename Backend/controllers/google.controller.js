@@ -24,6 +24,7 @@ exports.googleLoginCallback = async (req, res) => {
     const { data } = await oauth2.userinfo.get();
     console.log("2. Login data received for:", data.email);
     
+    const user = await User.findOne({email:data.email});
     if (!user) {
       // If user doesn't exist, stop them!
       return res.redirect(`${process.env.FRONTEND_URL}/auth?error=user_not_found`);
