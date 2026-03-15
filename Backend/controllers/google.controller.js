@@ -1,6 +1,7 @@
 const oauth2Client = require("../utils/googleAuth");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcrypt');
 const { google } = require('googleapis');
 
 // google.controller.js
@@ -40,6 +41,8 @@ exports.googleRegisterCallback = async (req, res) => {
   try {
     const { code } = req.query;
     const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+    
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
     const { data } = await oauth2.userinfo.get();
 
@@ -64,7 +67,11 @@ exports.googleRegisterCallback = async (req, res) => {
     await newUser.save();
 
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    const userData = JSON.stringify({ id: newUser._id, name: newUser.name, email: newUser.email });
+    const userData = JSON.stringify({ 
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email
+    });
 
     res.redirect(`${process.env.FRONTEND_URL}/login-success?token=${token}&user=${encodeURIComponent(userData)}`);
   } catch (error) {
