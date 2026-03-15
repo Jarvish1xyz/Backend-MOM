@@ -2,6 +2,21 @@ const oauth2Client = require("../utils/googleAuth");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
+exports.googleLoginTrigger = (req, res) => {
+  // This creates the URL for the "Login with Google" button
+  const url = oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    prompt: "consent", 
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/calendar" // Keeps your Meet feature active
+    ],
+  });
+
+  res.redirect(url);
+};
+
 exports.authGoogle = (req, res) => {
   const token = req.query.token;
 

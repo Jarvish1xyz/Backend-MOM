@@ -21,6 +21,11 @@ function LoginForm({ onClickCheck, isVisible }) {
     }
   };
 
+  const handleGoogleLogin = () => {
+    // This points to the route we just created in the backends
+    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google/login`;
+  };
+
   return (
     <div className={`w-full max-w-sm transition-all duration-500 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10 pointer-events-none"}`}>
       <h2 className="text-3xl font-black text-slate-800 mb-8 tracking-tight text-center">Sign In</h2>
@@ -33,6 +38,13 @@ function LoginForm({ onClickCheck, isVisible }) {
             LOG IN
           </button>
         </form>
+        <button
+          onClick={handleGoogleLogin}
+          className="google-login-button"
+          style={{ backgroundColor: '#4285F4', color: 'white', padding: '10px', borderRadius: '5px' }}
+        >
+          Continue with Google
+        </button>
       </div>
     </div>
   );
