@@ -179,23 +179,27 @@ exports.googleRegisterTrigger = (req, res) => {
 exports.authGoogle = (req, res) => {
   const token = req.query.token;
 
-  if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-  }
+  if (!token) return res.status(401).json({ message: "No token provided" });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userEmail = decoded.email;
 
+    // FORCE the redirect URI into the client directly
+    oauth2Client.redirectUri = process.env.GOOGLE_MEETING_REDIRECT_URI;
+
     const url = oauth2Client.generateAuthUrl({
       access_type: "offline",
       prompt: "consent",
-      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI, // <--- Use the meeting URI
+      // Pass it again here for good measure
+      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI, 
       scope: ["https://www.googleapis.com/auth/calendar"],
-      state: userEmail,
+      state: userEmail, 
     });
 
+    console.log("Redirecting to Google with URI:", process.env.GOOGLE_MEETING_REDIRECT_URI);
     res.redirect(url);
+
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
