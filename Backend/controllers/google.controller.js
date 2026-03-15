@@ -38,33 +38,36 @@ exports.googleLoginCallback = async (req, res) => {
 
 // 📝 GOOGLE REGISTER CALLBACK
 exports.googleRegisterCallback = async (req, res) => {
+  console.log("1. Callback hit by Google"); // Check if Google even reaches your backend
   try {
     const { code } = req.query;
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
-    
+
     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
     const { data } = await oauth2.userinfo.get();
+    console.log("2. Google Data received for:", data.email);
 
     const existingUser = await User.findOne({ email: data.email });
     if (existingUser) {
-      // If user exists, tell them to login instead
+      console.log("3. User already exists");
       return res.redirect(`${process.env.FRONTEND_URL}/auth?error=user_exists`);
     }
 
-    // CREATE: Build the new user using your specific model fields
     const newUser = new User({
       name: data.name,
       username: data.email.split('@')[0] + Math.floor(Math.random() * 100),
       userid: Math.floor(1000000000 + Math.random() * 9000000000).toString(),
       email: data.email,
       password: await bcrypt.hash(Math.random().toString(36), 10),
+      phone: "0000000000",
       role: "Employee",
       googleConnected: true,
       googleRefreshToken: tokens.refresh_token
     });
 
     await newUser.save();
+    console.log("4. User saved to MongoDB successfully");
 
     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
     const userData = JSON.stringify({ 
@@ -78,6 +81,47 @@ exports.googleRegisterCallback = async (req, res) => {
     res.redirect(`${process.env.FRONTEND_URL}/auth?error=registration_failed`);
   }
 };
+// exports.googleRegisterCallback = async (req, res) => {
+//   try {
+//     const { code } = req.query;
+//     const { tokens } = await oauth2Client.getToken(code);
+//     oauth2Client.setCredentials(tokens);
+    
+//     const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
+//     const { data } = await oauth2.userinfo.get();
+
+//     const existingUser = await User.findOne({ email: data.email });
+//     if (existingUser) {
+//       // If user exists, tell them to login instead
+//       return res.redirect(`${process.env.FRONTEND_URL}/auth?error=user_exists`);
+//     }
+
+//     // CREATE: Build the new user using your specific model fields
+//     const newUser = new User({
+//       name: data.name,
+//       username: data.email.split('@')[0] + Math.floor(Math.random() * 100),
+//       userid: Math.floor(1000000000 + Math.random() * 9000000000).toString(),
+//       email: data.email,
+//       password: await bcrypt.hash(Math.random().toString(36), 10),
+//       role: "Employee",
+//       googleConnected: true,
+//       googleRefreshToken: tokens.refresh_token
+//     });
+
+//     await newUser.save();
+
+//     const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+//     const userData = JSON.stringify({ 
+//       id: newUser._id,
+//       name: newUser.name,
+//       email: newUser.email
+//     });
+
+//     res.redirect(`${process.env.FRONTEND_URL}/login-success?token=${token}&user=${encodeURIComponent(userData)}`);
+//   } catch (error) {
+//     res.redirect(`${process.env.FRONTEND_URL}/auth?error=registration_failed`);
+//   }
+// };
 
 // Function for Login Button
 exports.googleLoginTrigger = (req, res) => {
