@@ -178,7 +178,6 @@ exports.googleRegisterTrigger = (req, res) => {
 
 exports.authGoogle = (req, res) => {
   const token = req.query.token;
-  console.log("It reached hear!!!")
 
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
@@ -186,18 +185,18 @@ exports.authGoogle = (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     const userEmail = decoded.email;
 
     const url = oauth2Client.generateAuthUrl({
       access_type: "offline",
       prompt: "consent",
+      // ADD THIS LINE:
+      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI, 
       scope: ["https://www.googleapis.com/auth/calendar"],
       state: userEmail,
     });
 
     res.redirect(url);
-
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
   }
@@ -211,32 +210,39 @@ exports.authGoogleCallback = async (req, res) => {
       return res.status(400).send("Missing code or state");
     }
 
-    const { tokens } = await oauth2Client.getToken(code);
+    // FIX: Pass the object with redirect_uri
+    const { tokens } = await oauth2Client.getToken({
+      code: code,
+      redirect_uri: process.env.GOOGLE_MEETING_REDIRECT_URI
+    });
 
     if (!tokens.refresh_token) {
-      return res.status(400).send("No refresh token received");
+      // Note: If you already have a token and are just re-linking, 
+      // Google might not send a new refresh_token unless you force 'consent'
+      console.log("No new refresh token, using existing if available.");
     }
 
     const userEmail = state;
+    const updateData = { googleConnected: true };
+    
+    if (tokens.refresh_token) {
+      updateData.googleRefreshToken = tokens.refresh_token;
+    }
 
     const user = await User.findOneAndUpdate(
       { email: userEmail },
-      {
-        googleRefreshToken: tokens.refresh_token,
-        googleConnected: true,
-      },
+      updateData,
       { new: true }
     );
 
     if (!user) {
       return res.status(404).send("User not found");
     }
-    const urlToFrontend = process.env.FRONTEND_URL;
 
-    res.redirect(`${urlToFrontend}/create-meeting?google=success`);
+    res.redirect(`${process.env.FRONTEND_URL}/create-meeting?google=success`);
 
   } catch (error) {
-    console.error(error);
+    console.error("Meeting Auth Error:", error.response?.data || error.message);
     res.status(500).send("Google connection failed");
   }
 };
