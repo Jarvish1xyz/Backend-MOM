@@ -51,8 +51,8 @@ function CreateMOM() {
   const getFilteredUsers = (query) => {
     if (!query) return [];
     return allUsers.filter(u =>
-      (u.email.toLowerCase().includes(query.toLowerCase()) && (isAllDept || u.department === user.department)) ||
-      (u.username.toLowerCase().includes(query.toLowerCase()) && (isAllDept || u.department === user.department))
+      (u.email.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department)) ||
+      (u.username.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department))
       // (u.email.toLowerCase().includes(query.toLowerCase())) ||
       // (u.username.toLowerCase().includes(query.toLowerCase()))
     ).slice(0, 5); // Limit results for clean UI
@@ -255,7 +255,6 @@ function CreateMOM() {
             {/* 2. CONDITIONAL AREA */}
             {!isAllDept ? (
               <>
-                {/* MANUAL SEARCH AREA: Only visible when toggle is OFF */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {participants.map((email, i) => (
                     <div key={i} className="relative group animate-in fade-in duration-300">
@@ -272,26 +271,32 @@ function CreateMOM() {
                             className="w-full px-5 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-sm font-medium transition-all"
                           />
 
-                          {/* DROPDOWN MENU */}
                           {activeDropdown === i && email.length > 1 && (
                             <div className="absolute z-50 mt-2 w-full bg-white border border-slate-100 rounded-2xl shadow-xl overflow-hidden">
-                              {getFilteredUsers(email).map((u) => (
-                                <button
-                                  key={u._id}
-                                  type="button"
-                                  onClick={() => {
-                                    updateParticipant(i, u.email);
-                                    setActiveDropdown(null);
-                                  }}
-                                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors border-b border-slate-50 last:border-0 text-left"
-                                >
-                                  <img src={u.profileImg || `https://ui-avatars.com/api/?name=${u.username}`} className="w-8 h-8 rounded-lg bg-slate-100" alt="" />
-                                  <div>
-                                    <p className="text-sm font-bold text-slate-700 leading-tight">{u.username}</p>
-                                    <p className="text-[10px] text-slate-400 font-medium">{u.email}</p>
-                                  </div>
-                                </button>
-                              ))}
+                              {/* FIXED: Filter out current user from search results */}
+                              {allUsers
+                                .filter(u =>
+                                  (u.email.toLowerCase().includes(email.toLowerCase()) ||
+                                    u.username.toLowerCase().includes(email.toLowerCase())) &&
+                                  u.email !== currentUser?.email // <--- FILTER SELF
+                                )
+                                .map((u) => (
+                                  <button
+                                    key={u._id}
+                                    type="button"
+                                    onClick={() => {
+                                      updateParticipant(i, u.email);
+                                      setActiveDropdown(null);
+                                    }}
+                                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors border-b border-slate-50 last:border-0 text-left"
+                                  >
+                                    <img src={u.profileImg || `https://ui-avatars.com/api/?name=${u.username}`} className="w-8 h-8 rounded-lg bg-slate-100" alt="" />
+                                    <div>
+                                      <p className="text-sm font-bold text-slate-700 leading-tight">{u.username}</p>
+                                      <p className="text-[10px] text-slate-400 font-medium">{u.email}</p>
+                                    </div>
+                                  </button>
+                                ))}
                             </div>
                           )}
                         </div>
@@ -316,11 +321,9 @@ function CreateMOM() {
             ) : (
               /* ALL DEPARTMENT VIEW: Only visible when toggle is ON */
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-in slide-in-from-top-2 duration-300">
-                {/* This assumes 'allUsers' contains your colleagues. 
-         Adjust the filter below to match your department field 
-      */}
+                {/* FIXED: Filter out current user from department view */}
                 {allUsers
-                  .filter(u => u.department === user?.department)
+                  .filter(u => u.department === currentUser?.department && u.email !== currentUser?.email)
                   .map((u) => (
                     <div key={u._id} className="flex items-center gap-3 p-3 bg-white border border-slate-100 rounded-2xl shadow-sm">
                       <img src={u.profileImg || `https://ui-avatars.com/api/?name=${u.username}`} className="w-9 h-9 rounded-xl bg-slate-50" alt="" />
@@ -342,7 +345,7 @@ function CreateMOM() {
           </div>
 
           {/* Section 3: Participants */}
-          
+
 
           {/* Section 4: Details */}
           <div className="pt-6 border-t border-slate-50 space-y-6">
