@@ -253,6 +253,16 @@ const MeetingDetails = () => {
                             <p className="text-lg font-bold text-slate-700">
                                 {meeting.meetingid}
                             </p>
+                            {(user.role === "HR" || user.role === "Admin") &&
+                        (
+                            <button
+                                onClick={() => navigate(`/update-meeting/${id}`)}
+                                className="p-2.5 rounded-xl cursor-pointer border transition-all duration-300 flex items-center gap-2 font-bold text-sm bg-white border-slate-200 hover:bg-blue-100 hover:text-white rounded-xl transition-colors text-blue-600"
+                                title="Edit Meeting"
+                            >
+                                Join
+                            </button>
+                        )}
                         </div>
                     </div>
                 </div>
