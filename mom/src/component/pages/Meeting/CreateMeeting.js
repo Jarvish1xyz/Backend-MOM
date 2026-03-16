@@ -197,7 +197,7 @@ function CreateMOM() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+          {/* <div className="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-4">
               <div className={`p-3 rounded-2xl ${isAllDept ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-400'} transition-colors`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,7 +221,7 @@ function CreateMOM() {
                   }`}
               />
             </button>
-          </div>
+          </div> */}
 
           <div className="pt-6 border-t border-slate-50">
             {/* 1. THE TOGGLE BUTTON */}
@@ -342,84 +342,7 @@ function CreateMOM() {
           </div>
 
           {/* Section 3: Participants */}
-          <div className="pt-6 border-t border-slate-50">
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 block mb-4">
-              Attendees
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {participants.map((email, i) => (
-                <div key={i} className="relative group">
-                  <div className="flex gap-2 items-center">
-                    <div className="relative flex-1">
-                      <input
-                        value={email}
-                        onChange={(e) => {
-                          updateParticipant(i, e.target.value);
-                          setActiveDropdown(i);
-                        }}
-                        onFocus={() => setActiveDropdown(i)}
-                        placeholder="Search colleague name or email..."
-                        className="w-full px-5 py-2.5 rounded-xl border border-slate-200 focus:border-blue-500 outline-none text-sm font-medium transition-all"
-                      />
-
-                      {/* CUSTOM DROPDOWN MENU */}
-                      {activeDropdown === i && email.length > 1 && (
-                        <div className="absolute z-50 mt-2 w-full bg-white border border-slate-100 rounded-2xl shadow-xl shadow-slate-200/40 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-                          {getFilteredUsers(email).length > 0 ? (
-                            getFilteredUsers(email).map((u) => (
-                              <button
-                                key={u._id}
-                                type="button"
-                                onClick={() => {
-                                  updateParticipant(i, u.email);
-                                  setActiveDropdown(null);
-                                }}
-                                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-blue-50 transition-colors border-b border-slate-50 last:border-0 text-left"
-                              >
-                                <img
-                                  src={u.profileImg || `https://ui-avatars.com/api/?name=${u.username}`}
-                                  className="w-8 h-8 rounded-lg object-cover bg-slate-100"
-                                  alt=""
-                                />
-                                <div>
-                                  <p className="text-sm font-bold text-slate-700 leading-tight">{u.username}</p>
-                                  <p className="text-[10px] text-slate-400 font-medium">{u.email}</p>
-                                </div>
-                              </button>
-                            ))
-                          ) : (
-                            <div className="px-4 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">
-                              No matching users
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* REMOVE BUTTON (X) */}
-                    {participants.length > 1 && (
-                      <button
-                        onClick={() => removeParticipant(i)}
-                        className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                        title="Remove attendee"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              onClick={addParticipant}
-              className="mt-6 flex items-center gap-2 text-blue-600 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-blue-50 p-2 transition-colors"
-            >
-              <span className="text-lg">+</span> Add Attendee
-            </button>
-          </div>
+          
 
           {/* Section 4: Details */}
           <div className="pt-6 border-t border-slate-50 space-y-6">
