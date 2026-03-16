@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Loading from "../Layout/Loading";
 import { useNotice } from "../../../NoticeContext";
@@ -255,13 +255,17 @@ const MeetingDetails = () => {
                             </p>
                             {(meeting.googleMeetLink) &&
                         (
-                            <button
-                                onClick={() => navigate(`/update-meeting/${id}`)}
-                                className="p-2.5 rounded-xl cursor-pointer border transition-all duration-300 flex items-center gap-2 font-bold text-sm bg-white border-slate-200 hover:bg-blue-600 hover:text-white rounded-xl transition-colors text-blue-600"
-                                title="Edit Meeting"
-                            >
-                                Join
-                            </button>
+                            <Link
+                                to={meeting.googleMeetLink}
+                                target="_blank">
+                                <button
+                                    onClick={() => navigate(`/update-meeting/${id}`)}
+                                    className="p-2.5 w-3 rounded-xl cursor-pointer border transition-all duration-300 flex items-center gap-2 font-bold text-sm bg-white border-slate-200 hover:bg-blue-600 hover:text-white rounded-xl transition-colors text-blue-600"
+                                    title="Edit Meeting"
+                                >
+                                    Join
+                                </button>
+                            </Link>
                         )}
                         </div>
                     </div>
@@ -346,7 +350,7 @@ const MeetingDetails = () => {
                         <button
                             onClick={markAsCompleted}
                             disabled={updating}
-                            className="bg-green-500 w-40 cursor-pointer text-white px-4 py-2.5 rounded-xl text-sm justify-center font-bold hover:bg-green-600 shadow-lg shadow-emerald-100 transition-all flex items-center gap-2 disabled:opacity-50"
+                            className="bg-green-500 w-40 cursor-pointer text-white px-4 py-2.5 rounded-xl text-sm justify-center font-bold hover:bg-green-600 shadow-lg shadow-emerald-100 transition-all flex items-center disabled:opacity-50"
                         >
                             {updating ? (
                                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
