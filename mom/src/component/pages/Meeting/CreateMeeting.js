@@ -278,7 +278,7 @@ function CreateMOM() {
                                 .filter(u =>
                                   (u.email.toLowerCase().includes(email.toLowerCase()) ||
                                     u.username.toLowerCase().includes(email.toLowerCase())) &&
-                                  u.email !== currentUser?.email // <--- FILTER SELF
+                                  u.email !== user?.email // <--- FILTER SELF
                                 )
                                 .map((u) => (
                                   <button
@@ -323,7 +323,7 @@ function CreateMOM() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 animate-in slide-in-from-top-2 duration-300">
                 {/* FIXED: Filter out current user from department view */}
                 {allUsers
-                  .filter(u => u.department === currentUser?.department && u.email !== currentUser?.email)
+                  .filter(u => u.department === user?.department && u.email !== user?.email)
                   .map((u) => (
                     <div key={u._id} className="flex items-center gap-3 p-3 bg-white border border-slate-100 rounded-2xl shadow-sm">
                       <img src={u.profileImg || `https://ui-avatars.com/api/?name=${u.username}`} className="w-9 h-9 rounded-xl bg-slate-50" alt="" />
