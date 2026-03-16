@@ -260,7 +260,7 @@ const MeetingDetails = () => {
                                 target="_blank">
                                 <button
                                     onClick={() => navigate(`/update-meeting/${id}`)}
-                                    className="p-2.5 w-3 rounded-xl cursor-pointer border transition-all duration-300 flex items-center gap-2 font-bold text-sm bg-white border-slate-200 hover:bg-blue-600 hover:text-white rounded-xl transition-colors text-blue-600"
+                                    className="p-4.5  rounded-xl cursor-pointer border transition-all duration-300 flex items-center gap-2 font-bold text-sm bg-white border-slate-200 hover:bg-blue-600 hover:text-white rounded-xl transition-colors text-blue-600"
                                     title="Edit Meeting"
                                 >
                                     Join
