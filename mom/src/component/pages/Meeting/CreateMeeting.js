@@ -48,16 +48,6 @@ function CreateMOM() {
     }
   }, []);
 
-  const getFilteredUsers = (query) => {
-    if (!query) return [];
-    return allUsers.filter(u =>
-      (u.email.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department)) ||
-      (u.username.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department))
-      // (u.email.toLowerCase().includes(query.toLowerCase())) ||
-      // (u.username.toLowerCase().includes(query.toLowerCase()))
-    ).slice(0, 5); // Limit results for clean UI
-  };
-
   const removeParticipant = (index) => {
     const updated = participants.filter((_, i) => i !== index);
     setParticipants(updated.length ? updated : [""]); // Keep at least one empty row
@@ -276,8 +266,10 @@ function CreateMOM() {
                               {/* FIXED: Filter out current user from search results */}
                               {allUsers
                                 .filter(u =>
-                                  (u.email.toLowerCase().includes(email.toLowerCase()) ||
-                                    u.username.toLowerCase().includes(email.toLowerCase())) &&
+                                  (
+                                    (u.email.toLowerCase().includes(email.toLowerCase()) && (u.department === user.department)) ||
+                                    (u.username.toLowerCase().includes(email.toLowerCase()) && (u.department === user.department))
+                                  ) &&
                                   u.email !== user?.email // <--- FILTER SELF
                                 )
                                 .map((u) => (
