@@ -93,23 +93,23 @@ const MeetingDetails = () => {
         }
     };
 
-    // const markAsCompleted = async () => {
-    //     setUpdating(true);
-    //     try {
-    //         await API.put(
-    //             `/meeting/update-status/${id}`,
-    //             { status: "Done" },
-    //             {
-    //                 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    //             },
-    //         );
-    //         setMeeting({ ...meeting, status: "Done" });
-    //     } catch (err) {
-    //         console.error("Error updating status:", err);
-    //     } finally {
-    //         setUpdating(false);
-    //     }
-    // };
+    const markAsCompleted = async () => {
+        setUpdating(true);
+        try {
+            await API.put(
+                `/meeting/update-status/${id}`,
+                { status: "Done" },
+                {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                },
+            );
+            setMeeting({ ...meeting, status: "Done" });
+        } catch (err) {
+            console.error("Error updating status:", err);
+        } finally {
+            setUpdating(false);
+        }
+    };
 
     if (!meeting) return <Loading />;
 
@@ -253,11 +253,11 @@ const MeetingDetails = () => {
                             <p className="text-lg font-bold text-slate-700">
                                 {meeting.meetingid}
                             </p>
-                            {(user.role === "HR" || user.role === "Admin") &&
+                            {(meeting.googleMeetLink) &&
                         (
                             <button
                                 onClick={() => navigate(`/update-meeting/${id}`)}
-                                className="p-2.5 rounded-xl cursor-pointer border transition-all duration-300 flex items-center gap-2 font-bold text-sm bg-white border-slate-200 hover:bg-blue-100 hover:text-white rounded-xl transition-colors text-blue-600"
+                                className="p-2.5 rounded-xl cursor-pointer border transition-all duration-300 flex items-center gap-2 font-bold text-sm bg-white border-slate-200 hover:bg-blue6100 hover:text-white rounded-xl transition-colors text-blue-600"
                                 title="Edit Meeting"
                             >
                                 Join
@@ -339,6 +339,19 @@ const MeetingDetails = () => {
                                 <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                             ) : (
                                 "Delete Meeting"
+                            )}
+                        </button>
+                    )}
+                    {(user.role === "HR" || user.role === "Admin") && (
+                        <button
+                            onClick={markAsCompleted}
+                            disabled={updating}
+                            className="bg-green-500 w-40 cursor-pointer text-white px-4 py-2.5 rounded-xl text-sm justify-center font-bold hover:bg-green-600 shadow-lg shadow-emerald-100 transition-all flex items-center gap-2 disabled:opacity-50"
+                        >
+                            {updating ? (
+                                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                            ) : (
+                                "Mark as Completed"
                             )}
                         </button>
                     )}
