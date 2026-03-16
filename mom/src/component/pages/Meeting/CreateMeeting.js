@@ -9,6 +9,7 @@ function CreateMOM() {
   const [allUsers, setAllUsers] = useState([]); // To store user list from DB
   const [activeDropdown, setActiveDropdown] = useState(null); // Track which input is open
   const [participants, setParticipants] = useState([""]);
+  const [allSearch, setAllSearch] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     id: '',
@@ -50,8 +51,8 @@ function CreateMOM() {
   const getFilteredUsers = (query) => {
     if (!query) return [];
     return allUsers.filter(u =>
-      (u.email.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department)) ||
-      (u.username.toLowerCase().includes(query.toLowerCase()) && (u.department === user.department))
+      (u.email.toLowerCase().includes(query.toLowerCase()) && (allSearch || u.department === user.department)) ||
+      (u.username.toLowerCase().includes(query.toLowerCase()) && (allSearch || u.department === user.department))
       // (u.email.toLowerCase().includes(query.toLowerCase())) ||
       // (u.username.toLowerCase().includes(query.toLowerCase()))
     ).slice(0, 5); // Limit results for clean UI
@@ -194,6 +195,32 @@ function CreateMOM() {
               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1">Time</label>
               <input name="time" type="time" value={formData.time} onChange={handelChange} className="w-full px-5 py-3 rounded-2xl border border-slate-200 outline-none font-semibold text-slate-700" />
             </div>
+          </div>
+
+          <div className="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-3xl shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-4">
+              <div className={`p-3 rounded-2xl ${isAllDept ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-400'} transition-colors`}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-slate-800">Department Mode</h4>
+                <p className="text-xs text-slate-500">Include everyone from your team</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setAllSearch(!allSearch)}
+              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isAllDept ? 'bg-blue-600' : 'bg-slate-200'
+                }`}
+            >
+              <span
+                className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform duration-200 ease-in-out ${isAllDept ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+              />
+            </button>
           </div>
 
           {/* Section 3: Participants */}

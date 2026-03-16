@@ -232,7 +232,7 @@ const Profile = () => {
                   value={form.username || user.username}
                   disabled={!edit}
                 />
-                <Field label="Email Address" value={user.email} disabled />
+                <Field label="Email Address" value={user.email} disabled={!edit} />
                 <Field label="Department" value={user.department || "New Added"} disabled />
               </div>
 
