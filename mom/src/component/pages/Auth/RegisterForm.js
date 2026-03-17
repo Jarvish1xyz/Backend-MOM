@@ -30,7 +30,7 @@ function RegisterForm({ onClickCheck, isVisible, onToggle }) {
 
   return (
     <div className={`w-full max-w-sm transition-all duration-500 ${isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10 pointer-events-none"}`}>
-      <h2 className="text-3xl font-black text-slate-800 mb-8 tracking-tight text-center">Sign In</h2>
+      <h2 className="text-3xl font-black text-slate-800 mb-8 tracking-tight text-center">Register</h2>
       <div className="space-y-4">
         <form onSubmit={(e) => { e.preventDefault() }}>
           <AuthField placeholder="E-mail" name="email" type="email" onChange={handleChange} />
