@@ -126,14 +126,16 @@ exports.authGoogle = (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const client = createOAuthClient(process.env.GOOGLE_MEETING_REDIRECT_URI);
-
+    console.log(decoded)
+    
     const url = client.generateAuthUrl({
       access_type: "offline",
       prompt: "consent",
       scope: ["https://www.googleapis.com/auth/calendar"],
       state: decoded.email, // State is crucial for the callback
     });
-
+    console.log(url)
+    
     res.redirect(url);
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
